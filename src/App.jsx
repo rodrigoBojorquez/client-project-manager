@@ -1,8 +1,20 @@
+//Importaciones de dependencias
+import { useRoutes, BrowserRouter } from "react-router-dom";
+
+//Importaciones de paginas o componentes
+import Dashboard from '../src/Pages/Dash/Dashboard.jsx'
+
+//Aqui se agregan las rutas de las vistas
+const AppRoutes = () => {
+  let routes = useRoutes([{ path: "/", element: <Dashboard></Dashboard> }]);
+  return routes;
+};
+
 function App() {
   return (
-    <>
-      <h1 className="text-5xl font-Nunito">Holas</h1>
-    </>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   );
 }
 
