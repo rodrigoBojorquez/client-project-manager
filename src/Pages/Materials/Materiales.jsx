@@ -1,6 +1,8 @@
-import Sidebar from "../../Components/NavBar.jsx";
+// EmployeesPage.jsx
+import Sidebar from '../../Components/NavBar.jsx';
 
-function Dashboard() {
+
+const Materiales = () => {
   return (
     <div className="flex">
       <Sidebar/>
@@ -9,6 +11,6 @@ function Dashboard() {
       </div>
     </div>
   );
-}
+};
 
-export default Dashboard;
+export default Materiales;

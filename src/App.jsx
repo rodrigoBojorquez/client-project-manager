@@ -1,41 +1,30 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import NavBar from './Componentes/NavBar';
-import Empleados from './Pages/Dash/Empleados';
-import Equipos from './Pages/Dash/Equipos';
-import Materiales from './Pages/Dash/Materiales';
-import Proyectos from './Pages/Dash/Proyectos';
+import { useRoutes, BrowserRouter } from "react-router-dom";
+
+import Dashboard from "./Pages/Dash/Dashboard.jsx";
+import Employees from "./Pages/Employees/Empleados.jsx";
+// import Dashboard from './Pages/Login/Login.jsx'
+import Materials from "./Pages/Materials/Materiales.jsx";
+import Proyects from "./Pages/Proyects/Proyectos.jsx";
+import Teams from "./Pages/Teams/Equipos.jsx";
 
 const AppRoutes = () => {
-  return (
-    <Routes>
-      <Route
-        path="/*"
-        element={
-          <>
-            <NavBar />
-            <Routes>
-              <Route index element={<h1>Contenido de la página de inicio</h1>} />
-              <Route path="empleados" element={<Empleados />} />
-              <Route path="equipos" element={<Equipos />}/>
-              <Route path="materiales" element={<Materiales />}/>
-              <Route path="proyectos" element={<Proyectos />}/>
-              {/* Otras rutas pueden ir aquí si es necesario */}
-            </Routes>
-          </>
-        }
-      />
-    </Routes>
-  );
+  let routes = useRoutes([
+    { path: "/", element: <Dashboard /> },
+    { path: "/employees", element: <Employees /> },
+    // {path: '/', element: <Login/>},
+    { path: "/materials", element: <Materials /> },
+    { path: "/proyects", element: <Proyects /> },
+    { path: "/teams", element: <Teams /> },
+  ]);
+  return routes;
 };
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <AppRoutes />
-    </Router>
+    </BrowserRouter>
   );
 }
 
 export default App;
-

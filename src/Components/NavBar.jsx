@@ -20,25 +20,25 @@ function NavBar() {
             <h2>Dashboard</h2>
           </li>
         </Link>
-        <Link to="/">
+        <Link to="/proyects">
           <li className="flex items-center gap-5 w-[250px] h-[50px] px-5 rounded-md text-[#CCC] hover:text-white hover:bg-[#03BB85] focus:text-white focus:bg-[#03BB85] focu transition duration-300 ease-in-out ">
             <SlFolder className="text-[26px]" />
             <h2>Proyectos</h2>
           </li>
         </Link>
-        <Link to="/">
+        <Link to="/teams">
           <li className="flex items-center gap-5 w-[250px] h-[50px] px-5 rounded-md text-[#CCC] hover:text-white hover:bg-[#03BB85] focus:text-white focus:bg-[#03BB85] focu transition duration-300 ease-in-out ">
             <RiTeamLine className="text-[26px]" />
             <h2>Equipos</h2>
           </li>
         </Link>
-        <Link to="/">
+        <Link to="/materials">
           <li className="flex items-center gap-5 w-[250px] h-[50px] px-5 rounded-md text-[#CCC] hover:text-white hover:bg-[#03BB85] focus:text-white focus:bg-[#03BB85] focu transition duration-300 ease-in-out ">
             <HiOutlineArchiveBox className="text-[26px]" />
             <h2>Materiales</h2>
           </li>
         </Link>
-        <Link to="/">
+        <Link to="/employees">
           <li className="flex items-center gap-5 w-[250px] h-[50px] px-5 rounded-md text-[#CCC] hover:text-white hover:bg-[#03BB85] focus:text-white focus:bg-[#03BB85] focu transition duration-300 ease-in-out ">
             <GoPeople className="text-[26px]" />
             <h2>Empleados</h2>
