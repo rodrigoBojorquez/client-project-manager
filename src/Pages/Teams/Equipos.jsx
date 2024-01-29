@@ -63,7 +63,7 @@ const Equipos = () => {
             onChange={searchTeam}
             value={search}
             type="text"
-            className="w-[400px] h-9 px-4 bg-[#EEE] rounded-s-md focus:outline-none"
+            className="w-[400px] h-9 px-4 bg-[#EEE] rounded-s-md focus:outline-[#ccc]"
             placeholder="Buscar equipo/lider"
           />
           <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
