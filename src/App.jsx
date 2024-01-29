@@ -5,7 +5,7 @@ import Empleados from './Pages/Dash/Empleados';
 import Equipos from './Pages/Dash/Equipos';
 import Materiales from './Pages/Dash/Materiales';
 import Proyectos from './Pages/Dash/Proyectos';
-
+import Login from './Pages/Dash/Login';
 const AppRoutes = () => {
   return (
     <Routes>
@@ -20,6 +20,7 @@ const AppRoutes = () => {
               <Route path="equipos" element={<Equipos />}/>
               <Route path="materiales" element={<Materiales />}/>
               <Route path="proyectos" element={<Proyectos />}/>
+              <Route path="login" element={<Login />}/>
               {/* Otras rutas pueden ir aquí si es necesario */}
             </Routes>
           </>
