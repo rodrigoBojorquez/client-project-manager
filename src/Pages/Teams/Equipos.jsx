@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 
 import Sidebar from "../../Components/NavBar.jsx";
+import Edit from "./Forms/Edit.jsx";
+import CreateTeam from "./Forms/CreateTeam.jsx";
 
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
@@ -12,16 +14,34 @@ const equipos = [
     nombreEquipo: "Equipo A",
     lider: "Juan Pérez",
     numMiembros: 5,
+    miembros: [
+      { nombre: "Marcos", especialidad: "Diseñador principal" },
+      { nombre: "Javier", especialidad: "Analista" },
+      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
+      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
+      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
+      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
+    ],
   },
   {
     nombreEquipo: "Equipo B",
     lider: "María Rodríguez",
     numMiembros: 8,
+    miembros: [
+      { nombre: "Marcos", especialidad: "Diseñador principal" },
+      { nombre: "Javier", especialidad: "Analista" },
+      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
+    ],
   },
   {
     nombreEquipo: "Equipo C",
     lider: "Carlos Sánchez",
     numMiembros: 6,
+    miembros: [
+      { nombre: "Marcos", especialidad: "Diseñador principal" },
+      { nombre: "Javier", especialidad: "Analista" },
+      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
+    ],
   },
 ];
 
@@ -33,6 +53,27 @@ const normalizeString = (str) =>
 
 const Equipos = () => {
   const [search, setSearch] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
+  const [selectedEquipo, setSelectedEquipo] = useState(null);
+
+  const openModal = (equipo) => {
+    setSelectedEquipo(equipo);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setSelectedEquipo(null);
+    setShowModal(false);
+  };
+
+  const openCreateTeamModal = () => {
+    setShowCreateTeamModal(true);
+  };
+
+  const closeCreateTeamModal = () => {
+    setShowCreateTeamModal(false);
+  };
 
   const searchTeam = (e) => {
     setSearch(normalizeString(e.target.value));
@@ -53,7 +94,10 @@ const Equipos = () => {
       <div className="font-Nunito mt-6 ml-8 w-">
         <div className="w-full items-baseline flex gap-5">
           <h1 className="text-[65px] font-bold">Equipos</h1>
-          <button className="flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl">
+          <button
+            onClick={openCreateTeamModal}
+            className="flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl"
+          >
             <BsFillPlusCircleFill className="text-3xl" />
             <p className="text-xl font-bold">Nuevo</p>
           </button>
@@ -84,9 +128,13 @@ const Equipos = () => {
                     <td>{item.lider}</td>
                     <td className="pl-14">{item.numMiembros}</td>
                     <td className="flex h-auto items-center gap-5 mt-2">
-                      <button className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm">
+                      <button
+                        onClick={() => openModal(item)}
+                        className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm"
+                      >
                         Detalles
                       </button>
+                      {/* Boton de editar */}
                       <button className="text-[#1DAF90]">
                         <FiEdit className="text-2xl" />
                       </button>
@@ -102,6 +150,16 @@ const Equipos = () => {
           )}
         </div>
       </div>
+      {showModal && (
+        <div className="absolute w-full">
+          <Edit equipoData={selectedEquipo} closeModal={closeModal} />
+        </div>
+      )}
+      {showCreateTeamModal && (
+        <div className="absolute w-full">
+          <CreateTeam closeModal={closeCreateTeamModal} />
+        </div>
+      )}
     </div>
   );
 };

@@ -8,6 +8,7 @@ import Proyects from "./Pages/Proyects/Proyectos.jsx";
 import Teams from "./Pages/Teams/Equipos.jsx";
 
 import Create from './Pages/Teams/Forms/CreateTeam.jsx'
+import Edit from './Pages/Teams/Forms/Edit.jsx'
 
 const AppRoutes = () => {
   let routes = useRoutes([
@@ -18,6 +19,7 @@ const AppRoutes = () => {
     { path: "/proyects", element: <Proyects /> },
     { path: "/teams", element: <Teams /> },
     { path: "/create", element: <Create /> },
+    { path: "/edit", element: <Edit /> },
   ]);
   return routes;
 };
