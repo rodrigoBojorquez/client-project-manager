@@ -7,8 +7,7 @@ import Materials from "./Pages/Materials/Materiales.jsx";
 import Proyects from "./Pages/Proyects/Proyectos.jsx";
 import Teams from "./Pages/Teams/Equipos.jsx";
 
-import Create from './Pages/Teams/Forms/CreateTeam.jsx'
-import Edit from './Pages/Teams/Forms/Edit.jsx'
+import Create from './Pages/Proyects/Modals/CreateProject.jsx'
 
 const AppRoutes = () => {
   let routes = useRoutes([
@@ -19,7 +18,6 @@ const AppRoutes = () => {
     { path: "/proyects", element: <Proyects /> },
     { path: "/teams", element: <Teams /> },
     { path: "/create", element: <Create /> },
-    { path: "/edit", element: <Edit /> },
   ]);
   return routes;
 };
