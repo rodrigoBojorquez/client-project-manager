@@ -95,6 +95,7 @@ const Equipos = () => {
         <div className="w-full items-baseline flex gap-5">
           <h1 className="text-[65px] font-bold">Equipos</h1>
           <button
+          type="button"
             onClick={openCreateTeamModal}
             className="flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl"
           >
@@ -157,7 +158,9 @@ const Equipos = () => {
       )}
       {showCreateTeamModal && (
         <div className="absolute w-full">
-          <CreateTeam closeModal={closeCreateTeamModal} />
+          <CreateTeam
+            closeModal={closeCreateTeamModal}
+          />
         </div>
       )}
     </div>
