@@ -1,42 +1,50 @@
 // EmployeesPage.jsx
+import { useState } from 'react';
 import Sidebar from '../../Components/NavBar.jsx';
-import { BsFillPlusCircleFill } from "react-icons/bs";
-import { HiMagnifyingGlass } from "react-icons/hi2";
+import CreateMaterials from './Forms/CreateMaterials.jsx';
+import { BsFillPlusCircleFill } from 'react-icons/bs';
+import { HiMagnifyingGlass } from 'react-icons/hi2';
 
 const Materiales = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const openModal = () => {
+    setShowModal(true);
+  };
+
   return (
     <div className="flex">
-      <Sidebar/>
-      <div className="" style={{ marginTop: '30px', border: '2px ', marginLeft: '2cm' }}>
-      <div className="font-Nunito mt-6 ml-8 w-">
-  <div className="w-full items-baseline flex gap-5">
-          <h1 className="text-[65px] font-bold">Materiales</h1>
-          <button
-            
-            className="flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl"
-          >
-            <BsFillPlusCircleFill className="text-3xl" />
-            <p className="text-xl font-bold">Nuevo</p>
-          </button>
-        </div>
+      <Sidebar />
+      <div className="" style={{ marginTop: '30px', border: '2px ', marginLeft: '0.5cm' }}>
+        <div className="font-Nunito mt-6 ml-8 w-">
+          <div className="w-full items-baseline flex gap-5">
+            <h1 className="text-[65px] font-bold">Materiales</h1>
+            <button
+              onClick={openModal}
+              className="flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl"
+            >
+              <BsFillPlusCircleFill className="text-3xl" />
+              <p className="text-xl font-bold">Nuevo</p>
+            </button>
+            {showModal && <CreateMaterials closeModal={() => setShowModal(false)} />}
+          </div>
         </div>
         <div className="flex items-center mt-8 ml-1">
           <input
-           
             type="text"
             className="w-[400px] h-9 px-4 bg-[#EEE] rounded-s-md focus:outline-[#ccc]"
             placeholder="Buscar material"
           />
           <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
         </div>
-        <div className="" style={{ marginTop: '20px', border: '1px ', marginLeft: '2cm' }}/>
-  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="" style={{ marginTop: '20px', border: '2px ', marginLeft: '2cm' }} />
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-          <tr className="text-[#555] text-xl font-semibold">
-                <th className="pr-[16rem] pb-4">Nombre</th>
-                <th className="pr-[16rem] pb-4">Cantidad</th>
-                <th className="pr-[4rem] pb-4">Acciones</th>
-              </tr>
+            <tr className="text-[#555] text-xl font-semibold">
+              <th className="pr-[16rem] pb-4">Nombre</th>
+              <th className="pr-[16rem] pb-4">Cantidad</th>
+              <th className="pr-[4rem] pb-4">Acciones</th>
+            </tr>
           </thead>
           <tbody>
             <tr>
@@ -110,8 +118,11 @@ const Materiales = () => {
           </tbody>
         </table>
 </div>
-    </div>
-  );
-};
+
+        </div>
+     
+
+);
+  };
 
 export default Materiales;
