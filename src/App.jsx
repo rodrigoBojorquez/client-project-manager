@@ -5,10 +5,6 @@ import Employees from "./Pages/Employees/Empleados.jsx";
 import Materials from "./Pages/Materials/Materiales.jsx";
 import Proyects from './Pages/Proyects/Proyectos.jsx'
 import Teams from "./Pages/Teams/Equipos.jsx";
-
-import Search from "./Pages/Teams/PeopleSearchBar/PeopleSearchBar.jsx";
-import CreateMaterials from "./Pages/Materials/Forms/CreateMaterials.jsx";
-import CreateEmployees from "./Pages/Employees/Forms/CreateEmployees.jsx";
 import Login from './Pages/Login/Login.jsx';
 
 const AppRoutes = () => {
@@ -16,7 +12,7 @@ const AppRoutes = () => {
     {path: '/', element: <Dashboard></Dashboard>},
     {path: '/employees', element: <Employees></Employees>},
     {path: '/materials', element: <Materials></Materials>},
-    {path: '/proyects', element: <Proyects></Proyects>},
+    {path: '/projects', element: <Proyects></Proyects>},
     {path: '/teams', element: <Teams></Teams>},
     {path: '/login' , element: <Login></Login>},
   ])

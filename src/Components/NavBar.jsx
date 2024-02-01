@@ -28,7 +28,7 @@ function NavBar() {
             <h2>Dashboard</h2>
           </li>
         </Link>
-        <Link to="/proyects">
+        <Link to="/projects">
           <li
             className={`flex items-center gap-5 w-[250px] h-[50px] px-5 rounded-md text-[#CCC] mx-6 ${
               location.pathname === "/proyects"
