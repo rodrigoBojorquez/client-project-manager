@@ -8,7 +8,7 @@ function ContextProvider({ children }) {
   // GLOBAL STATES
   const [ userData, setUserData ] = useState({
     username: "",
-    isAuht: false,
+    isAuth: false,
     role_name: ""
   })
 
@@ -16,7 +16,7 @@ function ContextProvider({ children }) {
   const login = (userData) => {
     setUserData({
         username: userData.username,
-        isAuht: true,
+        isAuth: true,
         role_name: userData.role_name
     })
   }
@@ -24,7 +24,7 @@ function ContextProvider({ children }) {
   const logout = () => {
     setUserData({
         username: "",
-        isAuht: false,
+        isAuth: false,
         role_name: ""
     })
   }
