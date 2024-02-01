@@ -1,5 +1,6 @@
 // EmployeesPage.jsx
 import { useState, useEffect } from "react";
+import axiosClient from "../../../axiosConfig.js";
 
 import Sidebar from "../../Components/NavBar.jsx";
 import CreateProjectForm from "./Modals/CreateProject.jsx";
@@ -9,33 +10,6 @@ import { BsFillPlusCircleFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 
-const equipos = [
-  {
-    nombreProyecto: "Proyecto A",
-    estado: "Completado",
-    lider: "Juan Pérez",
-    fecha: "20 - Ene - 2024",
-  },
-  {
-    nombreProyecto: "Proyecto B",
-    estado: "Completado",
-    lider: "Alexnader",
-    fecha: "20 - Ene - 2024",
-  },
-  {
-    nombreProyecto: "Proyecto C",
-    estado: "En curso",
-    lider: "Israel",
-    fecha: "20 - Ene - 2024",
-  },
-  {
-    nombreProyecto: "Proyecto A",
-    estado: "Pendiente",
-    lider: "Michelle",
-    fecha: "20 - Ene - 2024",
-  },
-];
-
 const normalizeString = (str) =>
   str
     .normalize("NFD")
@@ -43,49 +17,87 @@ const normalizeString = (str) =>
     .toLowerCase();
 
 const Proyectos = () => {
-  const [filter, setFilter] = useState("Todos");
   const [search, setSearch] = useState("");
   const [showCreateProjectModal, setCreateProjectShowModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const [teams, setTeams] = useState([]);
   const [showProjectDetails, setProjectDetails] = useState(false);
 
-  const handleFilterChange = (newFilter) => {
-    setFilter(newFilter);
+  const formatDate = (rawDate) => {
+    const formatedDate = new Date(rawDate).toLocaleDateString("es-ES", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: "UTC",
+    });
+    return formatedDate.replace(/\//g, " / ");
   };
 
-  const searchTeam = (e) => {
-    setSearch(normalizeString(e.target.value));
+  const getProjects = () => {
+    axiosClient
+      .get(`/projects?page=${page}`)
+      .then((res) => {
+        const formattedProjects = res.data.data.map((project) => ({
+          ...project,
+          create_date: formatDate(project.create_date),
+        }));
+
+        setTeams(formattedProjects);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
-  //Metodo para filtrar por nombre
-  const results = !search
-    ? equipos
-    : equipos.filter(
-        (dato) =>
-          normalizeString(dato.nombreProyecto).includes(search) ||
-          normalizeString(dato.lider).includes(search)
-      );
+  const handleSearch = () => {
+    setPage(1);
+    if (search.trim().length >= 3) {
+      axiosClient.get(`/projects?page=${page}&search=${search}`).then((res) => {
+          const formattedProjects = res.data.data.map((project) => ({
+            ...project,
+            create_date: formatDate(project.create_date),
+          }));
 
-  const filteredResults =
-    filter === "Todos"
-      ? results
-      : results.filter((item) => item.estado === filter);
+          setTeams(formattedProjects);
+      });
+    } else {
+      getProjects();
+    }
+  };
+
+  const handleFilter = (state_fk) => {
+    setPage(1)
+    setSearch("")
+    axiosClient.get(`/projects?page=${page}&state=${state_fk}`)
+      .then(res => {
+        const formattedProjects = res.data.data.map((project) => ({
+          ...project,
+          create_date: formatDate(project.create_date),
+        }));
+
+        setTeams(formattedProjects);  
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
 
   const openCreateProjectModanl = () => {
     setCreateProjectShowModal(true);
   };
+
   const closeCreateProjectModanl = () => {
     setCreateProjectShowModal(false);
   };
-  const openProjecDetails = () => {
-    setProjectDetails(true);
-  };
-  const closeProjecDetails = () => {
-    showProjectDetails(false);
-  };
+
+  useEffect(() => {
+    getProjects();
+  }, []);
+
   return (
-    <div className="flex">
+    <div className="flex w-full">
       <Sidebar />
-      <div className="font-Nunito mt-6 ml-8">
+      <div className="font-Nunito mx-10 mt-6 w-full">
         <div className="w-full items-baseline flex gap-5">
           <h1 className="text-[65px] font-bold">Proyectos</h1>
           <button
@@ -97,71 +109,92 @@ const Proyectos = () => {
           </button>
         </div>
         {/* Botones de filtro */}
-        <div className="flex items-center mt-10 ml-10 gap-5">
+        <div className="flex items-center mt-10 gap-5">
           <button
-            onClick={() => handleFilterChange("Todos")}
+            onClick={getProjects}
             className="bg-[#eee] focus:bg-[#1DAF90] focus:text-white hover:text-white hover:bg-[#1DAF90] focus:shadow-md hover:shadow-md font-semibold px-3 h-9 rounded"
           >
             Todos
           </button>
           <button
-            onClick={() => handleFilterChange("En curso")}
+            onClick={() => handleFilter(1)}
             className="bg-[#eee] focus:bg-[#1DAF90] focus:text-white hover:text-white hover:bg-[#1DAF90] focus:shadow-md hover:shadow-md font-semibold px-3 h-9 rounded"
           >
             En curso
           </button>
           <button
-            onClick={() => handleFilterChange("Pendiente")}
+            onClick={() => handleFilter(2)}
             className="bg-[#eee] focus:bg-[#1DAF90] focus:text-white hover:text-white hover:bg-[#1DAF90] focus:shadow-md hover:shadow-md font-semibold px-3 h-9 rounded"
           >
-            Pendiente
+            Terminados
           </button>
           <button
-            onClick={() => handleFilterChange("Completado")}
+            onClick={() => handleFilter(3)}
             className="bg-[#eee] focus:bg-[#1DAF90] focus:text-white hover:text-white hover:bg-[#1DAF90] focus:shadow-md hover:shadow-md font-semibold px-3 h-9 rounded"
           >
-            Completado
+            Cancelados
+          </button>
+          <button
+            onClick={() => handleFilter(4)}
+            className="bg-[#eee] focus:bg-[#1DAF90] focus:text-white hover:text-white hover:bg-[#1DAF90] focus:shadow-md hover:shadow-md font-semibold px-3 h-9 rounded"
+          >
+            En pausa
           </button>
           <div className="flex items-center">
             <input
-              onChange={searchTeam}
+              onChange={(e) => setSearch(e.target.value)}
               value={search}
               type="text"
               className="w-[400px] h-9 px-4 bg-[#EEE] rounded-s-md focus:outline-[#ccc]"
               placeholder="Buscar nombre del proyecto o lider"
             />
-            <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
+            <button onClick={handleSearch}>
+              <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
+            </button>
           </div>
         </div>
-        <div className="mt-8 ml-10 flex items-center justify-center">
-          {filteredResults.length > 0 ? (
-            <table>
+        <div className="mt-8 flex items-center justify-center">
+          {teams.length > 0 ? (
+            <table className="w-full">
               <tr className="text-[#555] text-xl font-semibold">
-                <th className="pr-[7rem] pb-4">Nombre del proyecto</th>
-                <th className="pr-[10rem] pb-4">Estado</th>
-                <th className="pr-[4rem] pb-4">Responsable</th>
-                <th className="pr-[6rem] pb-4">Fecha de inicio</th>
-                <td className="pr-[8rem] pb-4">&nbsp;</td>
+                <th className=" pb-4 text-center">Nombre</th>
+                <th className="pb-4 text-center">Estado</th>
+                <th className=" pb-4 text-center">Responsable</th>
+                <th className=" pb-4 text-center">Fecha de inicio</th>
+                <td className=" pb-4 text-center">Acciones</td>
               </tr>
               <tbody>
-                {filteredResults.map((item, index) => (
-                  <tr key={index} className="border-y border-[#999] h-12">
-                    <td>{item.nombreProyecto}</td>
+                {teams.map((item) => (
+                  <tr
+                    key={item.id_project}
+                    className="border-y border-[#999] h-12"
+                  >
+                    <td className="text-center">{item.project_name}</td>
                     <td
-                      className={`text-[#1DAF90] font-bold ${
-                        item.estado === "Pendiente" ? "text-[#FF0000]" : ""
-                      } ${item.estado === "En curso" ? "text-[#FF9900]" : ""}`}
+                      className={`font-bold text-center ${
+                        item.state_name === "terminado"
+                          ? "text-[#1DAF90]"
+                          : item.state_name === "en pausa"
+                          ? "text-amber-500"
+                          : item.state_name === "cancelado"
+                          ? "text-[#FF0000]"
+                          : ""
+                      } ${
+                        item.state_name === "en curso" ? "text-sky-500" : ""
+                      }`}
                     >
-                      {item.estado}
+                      {item.state_name}
                     </td>
-                    <td>{item.lider}</td>
-                    <td className="">{item.fecha}</td>
-                    <td className="flex h-auto items-center gap-5 mt-2">
-                      <button
-                        onClick={openProjecDetails}
-                        className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm"
-                      >
+                    <td className="text-center">
+                      {item.leader_username ? item.leader_username : "N/A"}
+                    </td>
+                    <td className="text-center">{item.create_date}</td>
+                    <td className="text-center">
+                      <button className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3">
                         Detalles
+                      </button>
+                      <button className="bg-red-400 text-white px-3 py-1 rounded-md text-sm">
+                        Eliminar
                       </button>
                     </td>
                   </tr>
@@ -174,17 +207,28 @@ const Proyectos = () => {
             </p>
           )}
         </div>
+
+        {/* CHANGE PAGES */}
+        <div className="flex gap-x-3 mt-5 justify-center">
+          <button
+            className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${page == 1 && "bg-gray-100 text-gray-400"}`}
+            disabled={page == 1}
+          >
+            Anterior
+          </button>
+          <button
+            className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${teams.length <10 && "bg-gray-100 text-gray-400"}`}
+            disabled={teams.length < 10}
+          >
+            Siguiente
+          </button>
+        </div>
       </div>
       {showCreateProjectModal && (
         <div className="h-screen absolute w-full">
           <CreateProjectForm
             closeCreateProjectModanl={closeCreateProjectModanl}
           />
-        </div>
-      )}
-      {showProjectDetails && (
-        <div className="absolute h-screen w-full">
-          <ProjectDetails ModalProjectDetails={closeProjecDetails} />
         </div>
       )}
     </div>
