@@ -87,7 +87,7 @@ const Proyectos = () => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="font-Nunito mt-6 ml-8 w-">
+      <div className="font-Nunito mt-6 ml-8">
         <div className="w-full items-baseline flex gap-5">
           <h1 className="text-[65px] font-bold">Proyectos</h1>
           <button onClick={openCreateProjectModanl} className="flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl">
