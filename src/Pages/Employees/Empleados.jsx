@@ -1,20 +1,34 @@
 // EmployeesPage.jsx
+import { useState } from 'react';
 import Sidebar from "../../Components/NavBar.jsx";
+import CreateEmployees from './Forms/CreateEmployees.jsx';
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { FiEdit } from "react-icons/fi";
 
 const Empleados = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const openModal = () => {
+    setShowModal(true);
+  };
+
   return (
     <div className="flex">
       <Sidebar />
       <div className="font-Nunito mt-6 ml-8">
         <div className="w-full items-baseline flex gap-5">
           <h1 className="text-[65px] font-bold">Empleados</h1>
-          <button className="flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl">
+          <button
+            onClick={openModal}
+            className="flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl"
+          >
             <BsFillPlusCircleFill className="text-3xl" />
             <p className="text-xl font-bold">Nuevo</p>
           </button>
+            {/*sin esto no saaale*/}
+            {showModal && <CreateEmployees closeModal={() => setShowModal(false)} />}
+        </div>
         </div>
         <div className="flex items-center mt-10 ml-10">
           <input

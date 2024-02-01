@@ -8,6 +8,8 @@ import Proyects from "./Pages/Proyects/Proyectos.jsx";
 import Teams from "./Pages/Teams/Equipos.jsx";
 
 import Search from "./Pages/Teams/PeopleSearchBar/PeopleSearchBar.jsx";
+import CreateMaterials from "./Pages/Materials/Forms/CreateMaterials.jsx";
+import CreateEmployees from "./Pages/Employees/Forms/CreateEmployees.jsx";
 
 const AppRoutes = () => {
   let routes = useRoutes([
@@ -17,6 +19,9 @@ const AppRoutes = () => {
     { path: "/materials", element: <Materials /> },
     { path: "/proyects", element: <Proyects /> },
     { path: "/teams", element: <Teams /> },
+    {path: "/creatematerials", element: <CreateMaterials />},
+    {path: "/createemployees", element: <CreateEmployees />}
+
   ]);
   return routes;
 };
