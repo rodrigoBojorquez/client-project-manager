@@ -1,8 +1,18 @@
 import { useState } from "react";
+import ModalMatirials from "../Modals/SearchMatirials.jsx";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
 const CreateProject = ({ closeCreateProjectModanl }) => {
+  const [modalMatirials, setModalMatirials] = useState(false);
+
+  const closeModalMatirials = () => {
+    setModalMatirials(false);
+  };
+  const openModalMatirials = () => {
+    setModalMatirials(true);
+  };
+
   const [proyecto, setProyecto] = useState({
     nombre: "",
     descripcion: "",
@@ -137,12 +147,16 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
                     <td>0</td>
                   </tr>
                 </table>
-                <button className=" font-semibold border-2 border-[#1DAF90] text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] rounded-md px-3">
+                <button
+                  type="button"
+                  onClick={openModalMatirials}
+                  className=" font-semibold border-2 border-[#1DAF90] text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] rounded-md px-3"
+                >
                   Agregar
                 </button>
               </div>
             </div>
-            <div className="flex flex-col">
+            {/* <div className="flex flex-col">
               <p>Estado del proyecto</p>
               <select
                 onChange={handleChangeEstado}
@@ -161,8 +175,8 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
                   Pendiente
                 </option>
               </select>
-            </div>
-            <div className="mt-32 space-x-10 flex items-center justify-center">
+            </div> */}
+            <div className="mt-[14rem] space-x-10 flex items-center justify-center">
               <button
                 type="submit"
                 className=" rounded-md text-semibold border-2 border-[#1DAF90] text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] px-3 py-1"
@@ -170,6 +184,7 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
                 Crear
               </button>
               <button
+                typeof="button"
                 onClick={closeCreateProjectModanl}
                 className=" rounded-md border-2 text-semibold border-[#a9a9a9] hover:text-white hover:bg-red-600 px-3 py-1"
               >
@@ -179,6 +194,11 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
           </div>
         </form>
       </div>
+      {modalMatirials && (
+        <div className="absolute w-full h-screen">
+          <ModalMatirials closeModalMatirials={closeModalMatirials} />
+        </div>
+      )}
     </div>
   );
 };
