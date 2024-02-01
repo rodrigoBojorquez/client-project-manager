@@ -7,24 +7,32 @@ import Materials from "./Pages/Materials/Materiales.jsx";
 import Proyects from "./Pages/Proyects/Proyectos.jsx";
 import Teams from "./Pages/Teams/Equipos.jsx";
 
-import Create from './Pages/Proyects/Modals/CreateProject.jsx'
+import Search from "./Pages/Teams/PeopleSearchBar/PeopleSearchBar.jsx";
 import CreateMaterials from "./Pages/Materials/Forms/CreateMaterials.jsx";
 import CreateEmployees from "./Pages/Employees/Forms/CreateEmployees.jsx";
-
+import Login from './Pages/Dash/Login';
 const AppRoutes = () => {
-  let routes = useRoutes([
-    { path: "/", element: <Dashboard /> },
-    { path: "/employees", element: <Employees /> },
-    // {path: '/', element: <Login/>},
-    { path: "/materials", element: <Materials /> },
-    { path: "/proyects", element: <Proyects /> },
-    { path: "/teams", element: <Teams /> },
-    { path: "/create", element: <Create /> },
-    {path: "/creatematerials", element: <CreateMaterials />},
-    {path: "/createemployees", element: <CreateEmployees />}
-
-  ]);
-  return routes;
+  return (
+    <Routes>
+      <Route
+        path="/*"
+        element={
+          <>
+            <NavBar />
+            <Routes>
+              <Route index element={<h1>Contenido de la página de inicio</h1>} />
+              <Route path="empleados" element={<Empleados />} />
+              <Route path="equipos" element={<Equipos />}/>
+              <Route path="materiales" element={<Materiales />}/>
+              <Route path="proyectos" element={<Proyectos />}/>
+              <Route path="login" element={<Login />}/>
+              {/* Otras rutas pueden ir aquí si es necesario */}
+            </Routes>
+          </>
+        }
+      />
+    </Routes>
+  );
 };
 
 function App() {
