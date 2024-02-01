@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 import Sidebar from "../../Components/NavBar.jsx";
 import CreateProjectForm from './Modals/CreateProject.jsx'
+import ProjectDetails from './Modals/ProjectDetails.jsx'
 
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
@@ -47,6 +48,7 @@ const Proyectos = () => {
   const [filter, setFilter] = useState("Todos");
   const [search, setSearch] = useState("");
   const [showCreateProjectModal, setCreateProjectShowModal] = useState(false)
+  const [showProjectDetails, setProjectDetails] = useState(false)
 
   const handleFilterChange = (newFilter) => {
     setFilter(newFilter);
@@ -75,6 +77,12 @@ const Proyectos = () => {
   }
   const closeCreateProjectModanl = ()=>{
     setCreateProjectShowModal(false);
+  }
+  const openProjecDetails = ()=>{
+    setProjectDetails(true);
+  }
+  const closeProjecDetails = ()=>{
+    showProjectDetails(false);
   }
   return (
     <div className="flex">
@@ -148,7 +156,7 @@ const Proyectos = () => {
                     <td>{item.lider}</td>
                     <td className="">{item.fecha}</td>
                     <td className="flex h-auto items-center gap-5 mt-2">
-                      <button className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm">
+                      <button onClick={openProjecDetails} className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm">
                         Detalles
                       </button>
                     </td>
@@ -166,6 +174,11 @@ const Proyectos = () => {
       {showCreateProjectModal && (
         <div className="h-screen absolute w-full">
           <CreateProjectForm closeCreateProjectModanl={closeCreateProjectModanl}/>
+        </div>
+      )}
+      {showProjectDetails && (
+        <div className="absolute h-screen w-full">
+          <ProjectDetails ModalProjectDetails={closeProjecDetails}/>
         </div>
       )}
     </div>
