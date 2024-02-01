@@ -9,12 +9,12 @@ import Login from './Pages/Login/Login.jsx';
 
 const AppRoutes = () => {
   let routes = useRoutes([
-    {path: '/', element: <Dashboard></Dashboard>},
+    {path: '/' , element: <Login></Login>},
+    {path: '/dashboard', element: <Dashboard></Dashboard>},
     {path: '/employees', element: <Employees></Employees>},
     {path: '/materials', element: <Materials></Materials>},
     {path: '/projects', element: <Proyects></Proyects>},
     {path: '/teams', element: <Teams></Teams>},
-    {path: '/login' , element: <Login></Login>},
   ])
   return routes
 };
