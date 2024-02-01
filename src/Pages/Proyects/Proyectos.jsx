@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 
 import Sidebar from "../../Components/NavBar.jsx";
-import CreateProjectForm from './Modals/CreateProject.jsx'
-import ProjectDetails from './Modals/ProjectDetails.jsx'
+import CreateProjectForm from "./Modals/CreateProject.jsx";
+import ProjectDetails from "./Modals/ProjectDetails.jsx";
 
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
@@ -42,13 +42,11 @@ const normalizeString = (str) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-
-  
 const Proyectos = () => {
   const [filter, setFilter] = useState("Todos");
   const [search, setSearch] = useState("");
-  const [showCreateProjectModal, setCreateProjectShowModal] = useState(false)
-  const [showProjectDetails, setProjectDetails] = useState(false)
+  const [showCreateProjectModal, setCreateProjectShowModal] = useState(false);
+  const [showProjectDetails, setProjectDetails] = useState(false);
 
   const handleFilterChange = (newFilter) => {
     setFilter(newFilter);
@@ -72,25 +70,28 @@ const Proyectos = () => {
       ? results
       : results.filter((item) => item.estado === filter);
 
-  const openCreateProjectModanl = ()=>{
+  const openCreateProjectModanl = () => {
     setCreateProjectShowModal(true);
-  }
-  const closeCreateProjectModanl = ()=>{
+  };
+  const closeCreateProjectModanl = () => {
     setCreateProjectShowModal(false);
-  }
-  const openProjecDetails = ()=>{
+  };
+  const openProjecDetails = () => {
     setProjectDetails(true);
-  }
-  const closeProjecDetails = ()=>{
+  };
+  const closeProjecDetails = () => {
     showProjectDetails(false);
-  }
+  };
   return (
     <div className="flex">
       <Sidebar />
       <div className="font-Nunito mt-6 ml-8">
         <div className="w-full items-baseline flex gap-5">
           <h1 className="text-[65px] font-bold">Proyectos</h1>
-          <button onClick={openCreateProjectModanl} className="flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl">
+          <button
+            onClick={openCreateProjectModanl}
+            className="flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl"
+          >
             <BsFillPlusCircleFill className="text-3xl" />
             <p className="text-xl font-bold">Nuevo</p>
           </button>
@@ -156,7 +157,10 @@ const Proyectos = () => {
                     <td>{item.lider}</td>
                     <td className="">{item.fecha}</td>
                     <td className="flex h-auto items-center gap-5 mt-2">
-                      <button onClick={openProjecDetails} className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm">
+                      <button
+                        onClick={openProjecDetails}
+                        className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm"
+                      >
                         Detalles
                       </button>
                     </td>
@@ -173,12 +177,14 @@ const Proyectos = () => {
       </div>
       {showCreateProjectModal && (
         <div className="h-screen absolute w-full">
-          <CreateProjectForm closeCreateProjectModanl={closeCreateProjectModanl}/>
+          <CreateProjectForm
+            closeCreateProjectModanl={closeCreateProjectModanl}
+          />
         </div>
       )}
       {showProjectDetails && (
         <div className="absolute h-screen w-full">
-          <ProjectDetails ModalProjectDetails={closeProjecDetails}/>
+          <ProjectDetails ModalProjectDetails={closeProjecDetails} />
         </div>
       )}
     </div>

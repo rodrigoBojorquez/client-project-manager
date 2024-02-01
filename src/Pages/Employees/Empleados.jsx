@@ -1,7 +1,7 @@
 // EmployeesPage.jsx
-import { useState } from 'react';
+import { useState } from "react";
 import Sidebar from "../../Components/NavBar.jsx";
-import CreateEmployees from './Forms/CreateEmployees.jsx';
+import CreateEmployees from "./Forms/CreateEmployees.jsx";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { FiEdit } from "react-icons/fi";
@@ -16,7 +16,7 @@ const Empleados = () => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="font-Nunito mt-6 ml-8">
+      <div className="font-Nunito mt-6 ml-8ññ">
         <div className="w-full items-baseline flex gap-5">
           <h1 className="text-[65px] font-bold">Empleados</h1>
           <button
@@ -26,15 +26,17 @@ const Empleados = () => {
             <BsFillPlusCircleFill className="text-3xl" />
             <p className="text-xl font-bold">Nuevo</p>
           </button>
-            {/*sin esto no saaale*/}
-            {showModal && <CreateEmployees closeModal={() => setShowModal(false)} />}
+          {/*sin esto no saaale*/}
+          {showModal && (
+            <CreateEmployees closeModal={() => setShowModal(false)} />
+          )}
         </div>
-        </div>
+
         <div className="flex items-center mt-10 ml-10">
           <input
             type="text"
             className="w-[400px] h-9 px-4 bg-[#EEE] rounded-s-md focus:outline-[#ccc]"
-            placeholder="Buscar empleado"
+            placeholder="Buscar equipo/lider"
           />
           <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
         </div>
@@ -66,9 +68,7 @@ const Empleados = () => {
             <button className="bg-white hover:bg-gray-100 text-gray-400 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
               Anterior
             </button>
-            <button
-              className="bg-white hover:bg-gray-100 text-black-500 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
-            >
+            <button className="bg-white hover:bg-gray-100 text-black-500 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
               Siguiente
             </button>
           </div>
