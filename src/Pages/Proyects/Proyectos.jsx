@@ -4,10 +4,7 @@ import axiosClient from "../../../axiosConfig.js";
 
 import Sidebar from "../../Components/NavBar.jsx";
 import CreateProjectForm from "./Modals/CreateProject.jsx";
-<<<<<<< HEAD
-=======
 import ProjectDetails from "./Modals/ProjectDetails.jsx";
->>>>>>> df4f7775e3ec2e242e71a3d8e9e1c9bc429c3d26
 
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
@@ -22,12 +19,9 @@ const normalizeString = (str) =>
 const Proyectos = () => {
   const [search, setSearch] = useState("");
   const [showCreateProjectModal, setCreateProjectShowModal] = useState(false);
-<<<<<<< HEAD
   const [page, setPage] = useState(1);
   const [teams, setTeams] = useState([]);
-=======
   const [showProjectDetails, setProjectDetails] = useState(false);
->>>>>>> df4f7775e3ec2e242e71a3d8e9e1c9bc429c3d26
 
   const formatDate = (rawDate) => {
     const formatedDate = new Date(rawDate).toLocaleDateString("es-ES", {
@@ -71,7 +65,6 @@ const Proyectos = () => {
     }
   };
 
-<<<<<<< HEAD
   const handleFilter = (state_fk) => {
     setPage(1)
     setSearch("")
@@ -101,28 +94,10 @@ const Proyectos = () => {
     getProjects();
   }, []);
 
-=======
-  const openCreateProjectModanl = () => {
-    setCreateProjectShowModal(true);
-  };
-  const closeCreateProjectModanl = () => {
-    setCreateProjectShowModal(false);
-  };
-  const openProjecDetails = () => {
-    setProjectDetails(true);
-  };
-  const closeProjecDetails = () => {
-    showProjectDetails(false);
-  };
->>>>>>> df4f7775e3ec2e242e71a3d8e9e1c9bc429c3d26
   return (
     <div className="flex w-full">
       <Sidebar />
-<<<<<<< HEAD
       <div className="font-Nunito mx-10 mt-6 w-full">
-=======
-      <div className="font-Nunito mt-6 ml-8">
->>>>>>> df4f7775e3ec2e242e71a3d8e9e1c9bc429c3d26
         <div className="w-full items-baseline flex gap-5">
           <h1 className="text-[65px] font-bold">Proyectos</h1>
           <button
@@ -210,22 +185,12 @@ const Proyectos = () => {
                     >
                       {item.state_name}
                     </td>
-<<<<<<< HEAD
                     <td className="text-center">
                       {item.leader_username ? item.leader_username : "N/A"}
                     </td>
                     <td className="text-center">{item.create_date}</td>
                     <td className="text-center">
                       <button className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3">
-=======
-                    <td>{item.lider}</td>
-                    <td className="">{item.fecha}</td>
-                    <td className="flex h-auto items-center gap-5 mt-2">
-                      <button
-                        onClick={openProjecDetails}
-                        className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm"
-                      >
->>>>>>> df4f7775e3ec2e242e71a3d8e9e1c9bc429c3d26
                         Detalles
                       </button>
                       <button className="bg-red-400 text-white px-3 py-1 rounded-md text-sm">
@@ -264,14 +229,6 @@ const Proyectos = () => {
           <CreateProjectForm
             closeCreateProjectModanl={closeCreateProjectModanl}
           />
-<<<<<<< HEAD
-=======
-        </div>
-      )}
-      {showProjectDetails && (
-        <div className="absolute h-screen w-full">
-          <ProjectDetails ModalProjectDetails={closeProjecDetails} />
->>>>>>> df4f7775e3ec2e242e71a3d8e9e1c9bc429c3d26
         </div>
       )}
     </div>
