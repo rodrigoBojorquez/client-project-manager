@@ -16,7 +16,7 @@ const Empleados = () => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="font-Nunito mt-6 ml-8ññ">
+      <div className="font-Nunito mt-6 ml-8">
         <div className="w-full items-baseline flex gap-5">
           <h1 className="text-[65px] font-bold">Empleados</h1>
           <button
