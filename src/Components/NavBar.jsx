@@ -30,7 +30,7 @@ function NavBar() {
         </Link>
         <Link to="/proyects">
           <li
-            className={`flex items-center gap-5 w-[250px] h-[50px] px-5 rounded-md text-[#CCC] ${
+            className={`flex items-center gap-5 w-[250px] h-[50px] px-5 rounded-md text-[#CCC] mx-6 ${
               location.pathname === "/proyects"
                 ? "text-white bg-[#03BB85]"
                 : "hover:text-white hover:bg-[#03BB85] focus:text-white focus:bg-[#03BB85] focus transition duration-300 ease-in-out"
