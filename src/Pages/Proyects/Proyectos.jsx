@@ -42,6 +42,7 @@ const Proyectos = () => {
           create_date: formatDate(project.create_date),
         }));
 
+        console.log(formattedProjects)
         setTeams(formattedProjects);
       })
       .catch((err) => {
@@ -90,9 +91,21 @@ const Proyectos = () => {
     setCreateProjectShowModal(false);
   };
 
+  const handlePreviousPage = () => {
+    setPage(page - 1);
+  };
+  
+  const handleNextPage = () => {
+    setPage(page + 1);
+  };
+
   useEffect(() => {
     getProjects();
   }, []);
+
+  useEffect(() => {
+    getProjects()
+  }, [page])
 
   return (
     <div className="flex w-full">
@@ -109,7 +122,7 @@ const Proyectos = () => {
           </button>
         </div>
         {/* Botones de filtro */}
-        <div className="flex items-center mt-10 gap-5">
+        <div className="flex items-center mt-5 gap-5">
           <button
             onClick={getProjects}
             className="bg-[#eee] focus:bg-[#1DAF90] focus:text-white hover:text-white hover:bg-[#1DAF90] focus:shadow-md hover:shadow-md font-semibold px-3 h-9 rounded"
@@ -213,12 +226,14 @@ const Proyectos = () => {
           <button
             className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${page == 1 && "bg-gray-100 text-gray-400"}`}
             disabled={page == 1}
+            onClick={handlePreviousPage}
           >
             Anterior
           </button>
           <button
             className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${teams.length <10 && "bg-gray-100 text-gray-400"}`}
             disabled={teams.length < 10}
+            onClick={handleNextPage}
           >
             Siguiente
           </button>

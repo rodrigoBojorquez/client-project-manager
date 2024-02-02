@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import ModalMatirials from "../Modals/SearchMatirials.jsx";
+import { RxCross2 } from "react-icons/rx";
+import axiosClient from "../../../../axiosConfig.js";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
@@ -17,6 +19,7 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
     nombre: "",
     descripcion: "",
     estado: "",
+    materiales: [],
   });
   const [error, setError] = useState({ nombre: "", descripcion: "" });
 
@@ -33,14 +36,6 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
     setProyecto({
       ...proyecto,
       descripcion: value,
-    });
-  };
-
-  const handleChangeEstado = (e) => {
-    const { value } = e.target;
-    setProyecto({
-      ...proyecto,
-      estado: value,
     });
   };
 
@@ -71,29 +66,55 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
       newErrors.descripcion =
         "La descripción no puede iniciar con caracteres especiales.";
     }
-    //Validar estado del proyecto
-    if (proyecto.estado === "") {
-      setProyecto({
-        ...proyecto,
-        estado: "Pendiente",
-      });
-    }
 
     setError(newErrors);
     return valid;
   };
 
+  const removeMaterial = useCallback(
+    (materialId) => {
+      const nuevosMateriales = proyecto.materiales.filter(
+        (item) => item.material.material_id !== materialId
+      );
+      setProyecto((prevProject) => ({
+        ...prevProject,
+        materiales: nuevosMateriales,
+      }));
+    },
+    [proyecto.materiales]
+  );
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
     // Validar el formulario antes de enviar
     if (validarFormulario()) {
+      const materialesFormateados = proyecto.materiales.map(item => ({
+        id: item.material.id_material,
+        quantity: item.quantity
+      }));
+
+      // console.log(materialesFormateados)
+  
+      axiosClient.post(`/project`, {
+        projectName: proyecto.nombre,
+        projectDescription: proyecto.descripcion,
+        materials: materialesFormateados
+      })
+      .then(res => {
+        alert("Proyecto agregado");
+        console.log(res.data.data)
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  
       closeCreateProjectModanl();
-      console.log("Formulario enviado:", proyecto);
     } else {
       console.log("El formulario tiene errores. No se puede enviar.");
     }
   };
+  
 
   return (
     <div className="h-screen w-full flex justify-center items-center bg-black bg-opacity-65 backdrop-blur-sm">
@@ -135,17 +156,41 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
           </div>
           <div className="flex flex-col p-5 w-full">
             <div className="flex flex-col gap-3 justify-center mb-16">
-              <p>Materiales *</p>
+              <p>Materiales</p>
               <div className="flex flex-col justify-center items-center w-full gap-5">
                 <table className="">
                   <tr className="text-lg font-semibold">
                     <td className="pr-32">Nombre</td>
                     <td className="">Cantidad</td>
                   </tr>
-                  <tr className="text-sm border-y border-[#999] h-10">
-                    <td>Nombre del material</td>
-                    <td>0</td>
-                  </tr>
+                  {proyecto.materiales.length > 0 ? (
+                    proyecto.materiales.map((item) => (
+                      <tr
+                        key={item.material.material_id}
+                        className="text-sm border-y border-[#999] h-10"
+                      >
+                        <td>{item.material.material_name}</td>
+                        <td className="">
+                          <div className="flex items-center justify-center">
+                          <p>{item.quantity}</p>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              removeMaterial(item.material.material_id)
+                            }
+                            className="text-red-600 hover:underline ml-2 text-2xl"
+                          >
+                            <RxCross2 />
+                          </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <p className="text-xs mt-2">
+                      No hay materiales agregados aun
+                    </p>
+                  )}
                 </table>
                 <button
                   type="button"
@@ -156,26 +201,6 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
                 </button>
               </div>
             </div>
-            {/* <div className="flex flex-col">
-              <p>Estado del proyecto</p>
-              <select
-                onChange={handleChangeEstado}
-                name=""
-                id=""
-                className=" outline-none border-2 border-[#a9a9a9] rounded-md text-base text-center"
-              >
-                <option value="">Selecciona el estado</option>
-                <option value="Completado" className="text-[#1DAF90]">
-                  Completado
-                </option>
-                <option value="En curso" className="text-[#FF9900]">
-                  En curso
-                </option>
-                <option value="Pendiente" className="text-[#FF0000]">
-                  Pendiente
-                </option>
-              </select>
-            </div> */}
             <div className="mt-[14rem] space-x-10 flex items-center justify-center">
               <button
                 type="submit"
@@ -196,7 +221,11 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
       </div>
       {modalMatirials && (
         <div className="absolute w-full h-screen">
-          <ModalMatirials closeModalMatirials={closeModalMatirials} />
+          <ModalMatirials
+            closeModalMatirials={closeModalMatirials}
+            setProyecto={setProyecto}
+            proyecto={proyecto}
+          />
         </div>
       )}
     </div>

@@ -1,6 +1,7 @@
 import { useRoutes, BrowserRouter, Routes, Route } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import GlobalContext from "./store/context.js";
+import axiosClient from "../axiosConfig.js";
 
 import Dashboard from "./Pages/Dash/Dashboard.jsx";
 import Employees from "./Pages/Employees/Empleados.jsx";
@@ -22,14 +23,62 @@ const AppRoutes = () => {
 };
 
 function App() {
+  const { userData, login } = useContext(GlobalContext);
+  const [tokenValidated, setTokenValidated] = useState(false);
 
-  const { userData } = useContext(GlobalContext)
+  const getToken = () => {
+    const allCookies = document.cookie;
+    const localCookie = allCookies.split(";").find((cookie) => cookie.trim().startsWith("token="));
+
+    if (localCookie) {
+      const cookieValue = localCookie.split('=')[1];
+      return cookieValue;
+    }
+  };
+
+  const validateToken = async (token) => {
+    try {
+      const response = await axiosClient.post('/token', {
+        token: token,
+      });
+
+      const data = response.data;
+
+      if (data.isValid == true) {
+        const [headerBase64, payloadBase64, signature] = token.split(".");
+        const decodePayload = JSON.parse(atob(payloadBase64));
+
+        login({
+          username: decodePayload.username,
+          isAuth: true,
+          role_name: decodePayload.role_name,
+        });
+        // window.location.assign("/dashboard")
+      } else {
+        // Elimina la cookie en caso de token inválido
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+        // Solo redirige si no se ha intentado validar antes
+        if (!tokenValidated) {
+          setTokenValidated(true);
+          window.location.assign("/");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const token = getToken();
+    validateToken(token);
+  }, []);
 
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route element={<PrivateRoute isAuth={userData.isAuth} />}>
+        <Route element={<PrivateRoute isAuth={true} />}>
           {/* <AppRoutes /> */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/employees" element={<Employees />} />
