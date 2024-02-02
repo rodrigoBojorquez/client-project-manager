@@ -99,6 +99,17 @@ const Proyectos = () => {
     setPage(page + 1);
   };
 
+  const handleDeleteProject = (id) => {
+    axiosClient.delete(`/projects/${id}`)
+      .then(res => {
+        alert("Projecto eliminado con exito")
+        getProjects()
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
+
   useEffect(() => {
     getProjects();
   }, []);
@@ -206,7 +217,7 @@ const Proyectos = () => {
                       <button className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3">
                         Detalles
                       </button>
-                      <button className="bg-red-400 text-white px-3 py-1 rounded-md text-sm">
+                      <button className="bg-red-400 text-white px-3 py-1 rounded-md text-sm" onClick={() => handleDeleteProject(item.id_project)}>
                         Eliminar
                       </button>
                     </td>
