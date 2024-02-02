@@ -78,7 +78,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route element={<PrivateRoute isAuth={true} />}>
+        <Route element={<PrivateRoute isAuth={userData.isAuth} />}>
           {/* <AppRoutes /> */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/employees" element={<Employees />} />

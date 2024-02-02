@@ -1,5 +1,5 @@
 // EmployeesPage.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axiosClient from "../../../axiosConfig.js";
 
 import Sidebar from "../../Components/NavBar.jsx";
@@ -10,11 +10,7 @@ import { BsFillPlusCircleFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 
-const normalizeString = (str) =>
-  str
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
+import GlobalContext from "../../store/context.js";
 
 const Proyectos = () => {
   const [search, setSearch] = useState("");
@@ -22,6 +18,8 @@ const Proyectos = () => {
   const [page, setPage] = useState(1);
   const [teams, setTeams] = useState([]);
   const [showProjectDetails, setProjectDetails] = useState(false);
+  const { userData } = useContext(GlobalContext);
+
 
   const formatDate = (rawDate) => {
     const formatedDate = new Date(rawDate).toLocaleDateString("es-ES", {
@@ -214,10 +212,10 @@ const Proyectos = () => {
                     </td>
                     <td className="text-center">{item.create_date}</td>
                     <td className="text-center">
-                      <button className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3">
+                      <button className={`bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3 ${userData.role_name != "administrator" ? "hidden" : ""}`}>
                         Detalles
                       </button>
-                      <button className="bg-red-400 text-white px-3 py-1 rounded-md text-sm" onClick={() => handleDeleteProject(item.id_project)}>
+                      <button className={`bg-red-400 text-white px-3 py-1 rounded-md text-sm ${(userData.role_name != "administrator" || userData.role_name != "team leader" || userData.role_name != "employee")}`} onClick={() => handleDeleteProject(item.id_project)}>
                         Eliminar
                       </button>
                     </td>

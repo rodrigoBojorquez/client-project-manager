@@ -1,235 +1,192 @@
-import { useState, useCallback } from "react";
-import ModalMatirials from "../Modals/SearchMatirials.jsx";
-import { RxCross2 } from "react-icons/rx";
-import axiosClient from "../../../../axiosConfig.js";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
+// const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
-const CreateProject = ({ closeCreateProjectModanl }) => {
-  const [modalMatirials, setModalMatirials] = useState(false);
-
-  const closeModalMatirials = () => {
-    setModalMatirials(false);
-  };
-  const openModalMatirials = () => {
-    setModalMatirials(true);
-  };
-
-  const [proyecto, setProyecto] = useState({
-    nombre: "",
-    descripcion: "",
-    estado: "",
-    materiales: [],
+function CreateEmployees({ closeModal }) {
+  const [user, setUser] = useState({
+    username: "",
+    email: "",
+    speciality: "",
+    rol: "",
   });
-  const [error, setError] = useState({ nombre: "", descripcion: "" });
-
-  const handleChangeNombre = (e) => {
+  const [error, setError] = useState({
+    username: "",
+    email: "",
+    speciality: "",
+    rol: "",
+  });
+  const handleChangeUserName = (e) => {
     const { value } = e.target;
-    setProyecto({
-      ...proyecto,
-      nombre: value,
+    setUser({
+      ...user,
+      username: value,
+    });
+  };
+  const handleChangeEmail = (e) => {
+    const { value } = e.target;
+    setUser({
+      ...user,
+      email: value,
+    });
+  };
+  const handleChangeSpeciality = (e) => {
+    const { value } = e.target;
+    setUser({
+      ...user,
+      speciality: value,
+    });
+  };
+  const handleChangeRol = (e) => {
+    const { value } = e.target;
+    setUser({
+      ...user,
+      rol: value,
     });
   };
 
-  const handleChangeDescripcion = (e) => {
-    const { value } = e.target;
-    setProyecto({
-      ...proyecto,
-      descripcion: value,
-    });
-  };
-
-  const validarFormulario = () => {
+  const validateForm = () => {
     let valid = true;
-    //Objeto para almacenar errores
     const newErrors = {
-      nombre: "",
-      descripcion: "",
+      username: "",
+      email: "",
+      speciality: "",
+      rol: "",
     };
 
-    // Validar nombre del proyecto
-    if (proyecto.nombre.trim() === "") {
+    if (user.username.trim() === "") {
       valid = false;
-      newErrors.nombre = "Por favor, ingresa un nombre de proyecto.";
-    } else if (!expresion.test(proyecto.nombre.trim())) {
+      newErrors.username = "Por favor, ingresa el nombre del usuario";
+    } else if (!expresion.test(user.username.trim())) {
       valid = false;
-      newErrors.nombre =
-        "El nombre no puede iniciar con caracteres especiales.";
+      newErrors.name = "El nombre no puede iniciar con caracteres especiales.";
     }
-
-    // Validar descripción del proyecto
-    if (proyecto.descripcion.trim() === "") {
+    if (user.email.trim() === "") {
       valid = false;
-      newErrors.descripcion = "Por favor, ingresa una descripción.";
-    } else if (!expresion.test(proyecto.descripcion.trim())) {
-      valid = false;
-      newErrors.descripcion =
-        "La descripción no puede iniciar con caracteres especiales.";
+      newErrors.email = "Por favor, ingresa un email";
+    } else if (!expresion.test(user.email.trim())) {
+      newErrors.email = "El email no pude ser un caracter";
     }
-
+    if (user.speciality.trim() === "") {
+      valid = false;
+      newErrors.speciality = "Por favor, ingresa una especialidad";
+    } else if (!expresion.test(user.speciality.trim())) {
+      newErrors.speciality = "La especialidad no pude ser un caracter";
+    }
+    if (user.rol.trim() === "") {
+      valid = false;
+      newErrors.rol = "Por favor, ingresa un rol";
+    } else if (!expresion.test(user.rol.trim())) {
+      newErrors.rol = "El rol no pude ser un caracter";
+    }
     setError(newErrors);
     return valid;
   };
-
-  const removeMaterial = useCallback(
-    (materialId) => {
-      const nuevosMateriales = proyecto.materiales.filter(
-        (item) => item.material.material_id !== materialId
-      );
-      setProyecto((prevProject) => ({
-        ...prevProject,
-        materiales: nuevosMateriales,
-      }));
-    },
-    [proyecto.materiales]
-  );
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Validar el formulario antes de enviar
-    if (validarFormulario()) {
-      const materialesFormateados = proyecto.materiales.map(item => ({
-        id: item.material.id_material,
-        quantity: item.quantity
-      }));
 
-      // console.log(materialesFormateados)
-  
-      axiosClient.post(`/project`, {
-        projectName: proyecto.nombre,
-        projectDescription: proyecto.descripcion,
-        materials: materialesFormateados
-      })
-      .then(res => {
-        alert("Proyecto agregado");
-        console.log(res.data.data)
-      })
-      .catch(err => {
-        console.error(err);
-      });
-  
-      closeCreateProjectModanl();
+    if (validateForm()) {
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/project-manager/warehouse",
+          {
+            username: user.username,
+            email: user.email,
+            speciality: user.speciality,
+            rol: user.rol,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        console.log("Formulario enviado", user);
+        console.log("Respuesta del servidor:", response.data);
+        closeModal();
+      } catch (error) {
+        console.error("Error en la solicitud", error.message);
+      }
     } else {
-      console.log("El formulario tiene errores. No se puede enviar.");
+      console.log("Errores en el formulario");
     }
   };
-  
-
   return (
-    <div className="h-screen w-full flex justify-center items-center bg-black bg-opacity-65 backdrop-blur-sm">
-      <div className="bg-white w-[850px] h-auto font-Nunito flex flex-col justify-center p-10 gap-10 rounded-lg">
-        <p className="text-4xl font-bold">Crear proyecto</p>
+    <div className="h-screen w-full flex justify-center items-center bg-black bg-opacity-65 backdrop-blur-sm font-Nunito fixed left-0 top-0 ">
+      <div className="bg-white h-[500px] w-auto rounded-md grid">
         <form
           onSubmit={handleSubmit}
-          className="text-[#666] flex gap-20 text-xl font-semibold"
+          className="flex flex-col justify-around m-10 gap-10"
         >
-          <div className="space-y-5">
-            <div className="flex flex-col">
-              <label htmlFor="">Nombre del proyecto</label>
+          <h2 className="text-4xl font-semibold">Nuevo Empleado</h2>
+          <div className="flex gap-10">
+            <div>
+              <p className="text-xl text-[#666] font-semibold">Nombres *</p>
               <input
-                value={proyecto.nombre}
-                onChange={handleChangeNombre}
+                value={user.username}
+                onChange={handleChangeUserName}
                 type="text"
-                className="text-base px-2 py-1 outline-[#666] border-2 border-[#a9a9a9]  rounded"
+                className="w-[250px] h-8 px-2 outline-none border border-[#a9a9a9] rounded-md "
               />
-              <div>
-                <p className="text-red-600 text-sm">{error.nombre}</p>
-              </div>
+              <p className="text-sm text-red-600">{error.username}</p>
             </div>
-            <div className="flex flex-col">
-              <label htmlFor="">Descripción</label>
-              <textarea
-                value={proyecto.descripcion}
-                onChange={handleChangeDescripcion}
-                name=""
-                id=""
-                cols="40"
-                rows="16"
-                className="border-2 border-[#a9a9a9] text-base p-2 outline-[#666] rounded-md"
-                placeholder="Detalles del proyecto"
-              ></textarea>
+            <div>
+              <p className="text-xl text-[#666] font-semibold">Email</p>
+              <input
+                value={user.email}
+                onChange={handleChangeEmail}
+                type="email"
+                className="w-[250px] h-8 px-2 outline-none border border-[#a9a9a9] rounded-md "
+              />
+              <p className="text-sm text-red-600">{error.email}</p>
+            </div>
+          </div>
+          <div className="flex gap-10">
+            <div>
+              <p className="text-xl text-[#666] font-semibold">
+                Especialidad *
+              </p>
+              <input
+                value={user.speciality}
+                onChange={handleChangeSpeciality}
+                type="text"
+                className="w-[250px] h-8 px-2 outline-none border border-[#a9a9a9] rounded-md "
+              />
+              <p className="text-sm text-red-600">{error.speciality}</p>
+            </div>
+
+            <div className="flex gap-16">
               <div>
-                <p className="text-sm text-red-600">{error.descripcion}</p>
+                <p className="text-xl text-[#666] font-semibold">Rol *</p>
+                <input
+                  value={user.rol}
+                  onChange={handleChangeRol}
+                  type="text"
+                  className="w-[250px] h-8 px-2 outline-none border border-[#a9a9a9] rounded-md "
+                />
+                <p className="text-sm text-red-600">{error.rol}</p>
               </div>
             </div>
           </div>
-          <div className="flex flex-col p-5 w-full">
-            <div className="flex flex-col gap-3 justify-center mb-16">
-              <p>Materiales</p>
-              <div className="flex flex-col justify-center items-center w-full gap-5">
-                <table className="">
-                  <tr className="text-lg font-semibold">
-                    <td className="pr-32">Nombre</td>
-                    <td className="">Cantidad</td>
-                  </tr>
-                  {proyecto.materiales.length > 0 ? (
-                    proyecto.materiales.map((item) => (
-                      <tr
-                        key={item.material.material_id}
-                        className="text-sm border-y border-[#999] h-10"
-                      >
-                        <td>{item.material.material_name}</td>
-                        <td className="">
-                          <div className="flex items-center justify-center">
-                          <p>{item.quantity}</p>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              removeMaterial(item.material.material_id)
-                            }
-                            className="text-red-600 hover:underline ml-2 text-2xl"
-                          >
-                            <RxCross2 />
-                          </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <p className="text-xs mt-2">
-                      No hay materiales agregados aun
-                    </p>
-                  )}
-                </table>
-                <button
-                  type="button"
-                  onClick={openModalMatirials}
-                  className=" font-semibold border-2 border-[#1DAF90] text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] rounded-md px-3"
-                >
-                  Agregar
-                </button>
-              </div>
-            </div>
-            <div className="mt-[14rem] space-x-10 flex items-center justify-center">
-              <button
-                type="submit"
-                className=" rounded-md text-semibold border-2 border-[#1DAF90] text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] px-3 py-1"
-              >
-                Crear
-              </button>
-              <button
-                typeof="button"
-                onClick={closeCreateProjectModanl}
-                className=" rounded-md border-2 text-semibold border-[#a9a9a9] hover:text-white hover:bg-red-600 px-3 py-1"
-              >
-                Descartar
-              </button>
-            </div>
+          <div className="flex items-center justify-center gap-5">
+            <button
+              type="submit"
+              className="flex gap-2 items-center text-lg text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] font-semibold border-2 border-[#1DAF90] px-2 py-1 rounded-md"
+            >
+              Añadir
+            </button>
+            <button
+              onClick={closeModal}
+              className="flex gap-2 items-center text-lg text-[#666] hover:text-white hover:bg-red-600 font-semibold border-2 border-[#666] hover:border-red-600 px-2 py-1 rounded-md"
+            >
+              Descartar
+            </button>
           </div>
         </form>
       </div>
-      {modalMatirials && (
-        <div className="absolute w-full h-screen">
-          <ModalMatirials
-            closeModalMatirials={closeModalMatirials}
-            setProyecto={setProyecto}
-            proyecto={proyecto}
-          />
-        </div>
-      )}
     </div>
   );
-};
+}
 
-export default CreateProject;
+export default CreateEmployees;
