@@ -1,7 +1,10 @@
 // EmployeesPage.jsx
-import { useState } from "react";
+import axios from "axios";
+import { useState, useEffect } from "react";
+
 import Sidebar from "../../Components/NavBar.jsx";
 import CreateMaterials from "./Forms/CreateMaterials.jsx";
+import EditMaterials from "./Forms/EditMaterials.jsx";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 
@@ -12,25 +15,67 @@ const normalizeString = (str) =>
     .toLowerCase();
 
 const Materiales = () => {
-  const [search, setSearch] = useState("");
-
-  // const searchMaterials = (e) => {
-  //   setSearch(normalizeString(e.target.value));
-  // };
-
-  // //Metodo para filtrar por nombre
-  // const results = !search
-  //   ? equipos
-  //   : equipos.filter(
-  //       (dato) =>
-  //         normalizeString(dato.nombreEquipo).includes(search) ||
-  //         normalizeString(dato.lider).includes(search)
-  //     );
-
   const [showModal, setShowModal] = useState(false);
+  const [data, setData] = useState([]);
+  const [error, setError] = useState(null);
+
+  const [showModalEdit, setShowModalEdit] = useState(false);
+  const [itemToEdit, setItemToEdit] = useState(null);
+
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8000/project-manager/warehouse?page=1"
+        );
+        setData(response.data.data);
+        console.log(data);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+    fetchData();
+  }, []);
 
   const openModal = () => {
     setShowModal(true);
+  };
+
+  const openModalEdit = (item) => {
+    setItemToEdit(item);
+    setShowModalEdit(true);
+  };
+  const closeModalEdit = () => {
+    setItemToEdit(null);
+    setShowModalEdit(false);
+  };
+
+  const openConfirmation = (item) => {
+    setItemToDelete(item);
+    setShowConfirmation(true);
+  };
+  const closeConfirtation = () => {
+    setItemToDelete(null);
+    setShowConfirmation(false);
+  };
+
+  const handleDelete = async () => {
+    try {
+      axios.delete(
+        `http://localhost:8000/project-manager/warehouse/${itemToDelete.id_material}`
+      );
+      const updateData = data.filter(
+        (item) => item.id_material !== itemToDelete.id_material
+      );
+      setData(updateData);
+      console.log("Material eliminado");
+      closeConfirtation();
+    } catch (error) {
+      console.error("Error al eliminar", error.message);
+    }
   };
 
   return (
@@ -59,29 +104,81 @@ const Materiales = () => {
           <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
         </div>
         <div className="mt-5 ml-10 flex items-center justify-center">
-          <table>
-            <tr className="text-[#555] text-xl font-semibold">
-              <th className="pr-[14rem] pb-4">Nombre del material</th>
-              <th className="pr-[18rem] pb-4">Cantidad</th>
-              <th className="pr-[4rem] pb-4">&nbsp;</th>
-            </tr>
-            <tbody>
-              <tr className="border-y border-[#999] h-12">
-                <td>Laptop Huawei</td>
-                <td>50 unidades</td>
-                <td className="space-x-5">
-                  <button className=" bg-[#1DAF90] text-white font-semibold py-1 px-4 rounded">
-                    editar
-                  </button>
-                  <button className="bg-red-600 text-white font-semibold py-1 px-4 rounded">
-                    eliminar
-                  </button>
-                </td>
+          {data.length === 0 ? (
+            <div>
+              <p className="text-xl text-[#666] font-bold">
+                No hay materiales. Agrega uno
+              </p>
+            </div>
+          ) : (
+            <table className="mt-5">
+              <tr className="text-[#555] text-xl font-semibold">
+                <th className="pr-[14rem] pb-4">Nombre del material</th>
+                <th className="pr-[18rem] pb-4">Cantidad</th>
+                <th className="pr-[4rem] pb-4">&nbsp;</th>
               </tr>
-            </tbody>
-          </table>
+              <tbody>
+                {data.map((item) => (
+                  <tr
+                    key={item.id_material}
+                    className="border-y border-[#999] h-12"
+                  >
+                    <td>{item.material_name}</td>
+                    <td>{item.quantity} unidades</td>
+                    <td className="space-x-5">
+                      <button
+                        onClick={() => openModalEdit(item)}
+                        className="bg-[#1DAF90] text-white font-semibold py-1 px-4 rounded"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => openConfirmation(item)}
+                        className="bg-[#FF6868] text-white font-semibold py-1 px-4 rounded"
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
+      {showConfirmation && (
+        <div className="absolute h-screen w-full bg-black bg-opacity-65 flex justify-center items-center">
+          <div className="bg-white w-[400px] h-[250px] flex flex-col items-center justify-center gap-12 rounded-xl">
+            <p className="font-semibold text-2xl text-center">
+              ¿Estas seguro de eliminar este elemento?
+            </p>
+            <div className="flex gap-10 font-semibold">
+              <button
+                onClick={handleDelete}
+                className="bg-[#1DAF90] hover:bg-[#038554] px-6 py-1 rounded-md text-white text-xl"
+              >
+                Si
+              </button>
+              <button
+                onClick={() => {
+                  closeConfirtation();
+                }}
+                className="hover:bg-red-600 border-2 border-[#666] hover:border-red-600 px-5 py-1 rounded-md text-[#666] hover:text-white text-xl"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showModalEdit && (
+        <div className="w-full h-screen absolute">
+          <EditMaterials
+            itemToEdit={itemToEdit}
+            closeModalEdit={() => setShowModalEdit(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };
