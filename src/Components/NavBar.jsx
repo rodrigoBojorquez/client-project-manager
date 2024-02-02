@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { VscHome } from "react-icons/vsc";
 import { SlFolder } from "react-icons/sl";
@@ -8,11 +8,18 @@ import { GoPeople } from "react-icons/go";
 import { FaRegUserCircle } from "react-icons/fa";
 import GlobalContext from "../store/context";
 import { useContext } from "react";
+import { FiLogOut } from "react-icons/fi";
 
 function NavBar() {
   const location = useLocation();
-  const { userData } = useContext(GlobalContext);
+  const { userData, logout } = useContext(GlobalContext);
+  const navigate = useNavigate()
   // console.log(userData)
+
+  const handleLogout = () => {
+    logout()
+    navigate("/")
+  }
 
   return (
     <nav className="bg-[#038554] h-screen w-[300px] flex flex-col text-white font-Nunito">
@@ -102,9 +109,15 @@ function NavBar() {
             </Link>
           )}
       </ul>
-      <div className="flex text-xl gap-3 items-center m-5">
-        <FaRegUserCircle className="text-3xl" />
-        <h2 className="font-semibold">{userData.username}</h2>
+      <div className="flex justify-between text-xl gap-3 items-center m-5">
+        <div className="flex items-center">
+          <FaRegUserCircle className="text-3xl" />
+          <h2 className="font-semibold">{userData.username}</h2>
+        </div>
+      
+        <button onClick={handleLogout}>
+          <FiLogOut size={"1.7rem"}/>
+        </button>
       </div>
     </nav>
   );
