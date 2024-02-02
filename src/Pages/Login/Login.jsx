@@ -48,15 +48,16 @@ const LoginForm = () => {
       withCredentials: true
     })
       .then(res => {
-        // console.log(res.headers)
+        console.log(res.headers)
         const cookieHeader = res.headers["set-cookie"]
-        // console.log(cookieHeader)
+        console.log(cookieHeader)
 
         if (cookieHeader) {
           document.cookie = cookieHeader.split(";")[0]
         }
 
         const allCookies = document.cookie
+        console.log("hol",allCookies)
         const localCookie = allCookies.split(";").find(cookie => cookie.trim().startsWith("token="))
   
         if (localCookie) {
@@ -64,7 +65,7 @@ const LoginForm = () => {
           const [ headerBase64, payloadBase64, signature ] = cookieValue.split(".")
   
           const decodePayload = JSON.parse(atob(payloadBase64))
-          // console.log(decodePayload)
+          console.log(decodePayload)
 
           login({
             username: decodePayload.username,
