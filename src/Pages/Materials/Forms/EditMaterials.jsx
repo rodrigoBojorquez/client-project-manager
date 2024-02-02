@@ -10,10 +10,8 @@ const EditMaterials = ({ closeModalEdit, itemToEdit }) => {
     quantity: itemToEdit ? itemToEdit.quantity : "",
   });
 
-  const [materialName, setMaterialName] = useState(initialMaterial.name);
-  const [materialQuantity, setMaterialQuantity] = useState(
-    initialMaterial.quantity
-  );
+  const [materialName, setMaterialName] = useState("");
+  const [materialQuantity, setMaterialQuantity] = useState("");
 
   const [error, setError] = useState({
     name: "",
@@ -56,7 +54,7 @@ const EditMaterials = ({ closeModalEdit, itemToEdit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     if (validateForm()) {
       try {
         const response = await axios.put(
@@ -76,7 +74,13 @@ const EditMaterials = ({ closeModalEdit, itemToEdit }) => {
           quantity: materialQuantity,
         });
         console.log("Respuesta del server", response.data);
-        console.log("Respuesta del server", response.data);
+        // Update the state to reflect the changes
+        setInitialMaterial({
+          name: materialName,
+          quantity: materialQuantity,
+        });
+        console.log(initialMaterial.name);
+
         closeModalEdit();
       } catch (error) {
         console.error("Error en la solicitud", error.message);
