@@ -57,6 +57,7 @@ const LoginForm = () => {
         }
 
         const allCookies = document.cookie
+        console.log("hol",allCookies)
         const localCookie = allCookies.split(";").find(cookie => cookie.trim().startsWith("token="))
   
         if (localCookie) {

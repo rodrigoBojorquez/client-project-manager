@@ -1,31 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
-const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
+const expresionNombre = /^[^\d!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
+const expresionCantidad = /^\d+$/;
 
-function CreateMaterials({ closeModal }) {
-  const [material, setMaterial] = useState({
-    name: "",
-    quantity: "",
+const EditMaterials = ({ closeModalEdit, itemToEdit }) => {
+  const [initialMaterial, setInitialMaterial] = useState({
+    name: itemToEdit ? itemToEdit.material_name : "",
+    quantity: itemToEdit ? itemToEdit.quantity : "",
   });
+
+  const [materialName, setMaterialName] = useState("");
+  const [materialQuantity, setMaterialQuantity] = useState("");
+
   const [error, setError] = useState({
     name: "",
     quantity: "",
   });
 
-  const handleChangeName = (e) => {
+  const handleNameChange = (e) => {
     const { value } = e.target;
-    setMaterial({
-      ...material,
-      name: value,
-    });
+    setMaterialName(value);
   };
-  const handleChangeQuantity = (e) => {
+
+  const handleQuantityChange = (e) => {
     const { value } = e.target;
-    setMaterial({
-      ...material,
-      quantity: value,
-    });
+    setMaterialQuantity(value);
   };
 
   const validateForm = () => {
@@ -35,17 +35,17 @@ function CreateMaterials({ closeModal }) {
       quantity: "",
     };
 
-    if (material.name.trim() === "") {
+    if (materialName.trim() === "") {
       valid = false;
       newErrors.name = "Por favor, ingresa el nombre del material";
-    } else if (!expresion.test(material.name.trim())) {
+    } else if (!expresionNombre.test(materialName.trim())) {
       valid = false;
       newErrors.name = "El nombre no puede iniciar con caracteres especiales.";
     }
-    if (material.quantity.trim() === "") {
+    if (materialQuantity.trim() === "") {
       valid = false;
       newErrors.quantity = "Por favor, ingresa una cantidad";
-    } else if (!expresion.test(material.quantity.trim())) {
+    } else if (!expresionCantidad.test(materialQuantity.trim())) {
       newErrors.quantity = "La cantidad no pude ser un caracter";
     }
     setError(newErrors);
@@ -54,15 +54,14 @@ function CreateMaterials({ closeModal }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     if (validateForm()) {
       try {
-        const response = await axios.post(
-          "http://localhost:8000/project-manager/warehouse",
+        const response = await axios.put(
+          `http://localhost:8000/project-manager/warehouse/${itemToEdit.id_material}`,
           {
-            materialName: material.name,
-            quantity: material.quantity,
-            measure: "unidades",
+            material_name: materialName,
+            quantity: materialQuantity,
           },
           {
             headers: {
@@ -70,32 +69,42 @@ function CreateMaterials({ closeModal }) {
             },
           }
         );
+        console.log("Material editado", {
+          material_name: materialName,
+          quantity: materialQuantity,
+        });
+        console.log("Respuesta del server", response.data);
+        // Update the state to reflect the changes
+        setInitialMaterial({
+          name: materialName,
+          quantity: materialQuantity,
+        });
+        console.log(initialMaterial.name);
 
-        console.log("Formulario enviado", material);
-        console.log("Respuesta del servidor:", response.data);
-        closeModal();
+        closeModalEdit();
       } catch (error) {
         console.error("Error en la solicitud", error.message);
       }
     } else {
-      console.log("Errores en el formulario");
+      console.log("Error en el formulario");
     }
   };
 
   return (
-    <div className="h-screen w-full flex justify-center items-center bg-black bg-opacity-65 backdrop-blur-sm font-Nunito fixed left-0 top-0 ">
-      <div className="bg-white h-auto w-[550px] rounded-md grid ">
+    <div className="bg-black bg-opacity-65 h-screen w-full flex items-center justify-center">
+      <div className="bg-white h-auto w-[550px] rounded-md ">
         <form onSubmit={handleSubmit} className="flex flex-col m-10 gap-10">
-          <h2 className="text-4xl font-semibold">Nuevo Material</h2>
+          <h2 className="text-4xl font-semibold">Editar material</h2>
           <div className="flex flex-col">
             <label htmlFor="" className="text-xl text-[#666] font-semibold">
               Nombre *
             </label>
             <input
-              value={material.name}
-              onChange={handleChangeName}
+              placeholder={initialMaterial.name}
+              value={materialName}
+              onChange={handleNameChange}
               type="text"
-              className="w-[390px] h-8 px-2 outline-none border border-[#a9a9a9] rounded-md "
+              className="w-[390px] h-8 px-2 border border-[#a9a9a9] rounded-md placeholder-[#666]"
             />
             <div>
               <p className="text-sm text-red-600">{error.name}</p>
@@ -106,10 +115,11 @@ function CreateMaterials({ closeModal }) {
               <p className="text-xl text-[#666] font-semibold">Cantidad *</p>
               <div className="flex gap-1">
                 <input
-                  value={material.quantity}
-                  onChange={handleChangeQuantity}
+                  placeholder={initialMaterial.quantity}
+                  value={materialQuantity}
+                  onChange={handleQuantityChange}
                   type="number"
-                  className="w-[150px] h-8 px-2 outline-none border border-[#a9a9a9] rounded-md "
+                  className="w-[150px] h-8 px-2 border border-[#a9a9a9] rounded-md "
                 />
                 <p className="text-xl text-[#666] font-semibold">Unidades</p>
               </div>
@@ -124,10 +134,10 @@ function CreateMaterials({ closeModal }) {
               type="submit"
               className="flex gap-2 items-center text-lg text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] font-semibold border-2 border-[#1DAF90] px-2 py-1 rounded-md"
             >
-              Añadir
+              Guardar
             </button>
             <button
-              onClick={closeModal}
+              onClick={closeModalEdit}
               className="flex gap-2 items-center text-lg text-[#666] hover:text-white hover:bg-red-600 font-semibold border-2 border-[#666] hover:border-red-600 px-2 py-1 rounded-md"
             >
               Descartar
@@ -137,6 +147,6 @@ function CreateMaterials({ closeModal }) {
       </div>
     </div>
   );
-}
+};
 
-export default CreateMaterials;
+export default EditMaterials;
