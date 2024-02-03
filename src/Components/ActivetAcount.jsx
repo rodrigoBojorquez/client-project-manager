@@ -24,7 +24,7 @@ const ActivetAcount = (props) => {
     e.preventDefault()
 
     if (password == repeatPassword && token != null) {
-      axiosClient.post(`/public/user/activate`, {
+      axiosClient.put(`/public/user/activate`, {
         token: token,
         password: password
       })

@@ -1,7 +1,8 @@
 // EmployeesPage.jsx
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axiosClient from "../../../axiosConfig.js";
+import GlobalContext from "../../store/context.js";
 
 import Sidebar from "../../Components/NavBar.jsx";
 import CreateProjectForm from "./Modals/CreateProject.jsx";
@@ -23,6 +24,8 @@ const Proyectos = () => {
   const [page, setPage] = useState(1);
   const [teams, setTeams] = useState([]);
   const [showProjectDetails, setProjectDetails] = useState(false);
+  const { userData } = useContext(GlobalContext);
+  const rol = userData.role_name
 
   const formatDate = (rawDate) => {
     const formatedDate = new Date(rawDate).toLocaleDateString("es-ES", {
@@ -34,6 +37,8 @@ const Proyectos = () => {
     return formatedDate.replace(/\//g, " / ");
   };
 
+  console.log(teams);
+
   const getProjects = () => {
     axiosClient
       .get(`/projects?page=${page}`)
@@ -43,7 +48,7 @@ const Proyectos = () => {
           create_date: formatDate(project.create_date),
         }));
 
-        console.log(formattedProjects)
+        console.log(formattedProjects);
         setTeams(formattedProjects);
       })
       .catch((err) => {
@@ -55,12 +60,12 @@ const Proyectos = () => {
     setPage(1);
     if (search.trim().length >= 3) {
       axiosClient.get(`/projects?page=${page}&search=${search}`).then((res) => {
-          const formattedProjects = res.data.data.map((project) => ({
-            ...project,
-            create_date: formatDate(project.create_date),
-          }));
+        const formattedProjects = res.data.data.map((project) => ({
+          ...project,
+          create_date: formatDate(project.create_date),
+        }));
 
-          setTeams(formattedProjects);
+        setTeams(formattedProjects);
       });
     } else {
       getProjects();
@@ -68,21 +73,22 @@ const Proyectos = () => {
   };
 
   const handleFilter = (state_fk) => {
-    setPage(1)
-    setSearch("")
-    axiosClient.get(`/projects?page=${page}&state=${state_fk}`)
-      .then(res => {
+    setPage(1);
+    setSearch("");
+    axiosClient
+      .get(`/projects?page=${page}&state=${state_fk}`)
+      .then((res) => {
         const formattedProjects = res.data.data.map((project) => ({
           ...project,
           create_date: formatDate(project.create_date),
         }));
 
-        setTeams(formattedProjects);  
+        setTeams(formattedProjects);
       })
-      .catch(err => {
-        console.error(err)
-      })
-  }
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   const openCreateProjectModanl = () => {
     setCreateProjectShowModal(true);
@@ -95,7 +101,7 @@ const Proyectos = () => {
   const handlePreviousPage = () => {
     setPage(page - 1);
   };
-  
+
   const handleNextPage = () => {
     setPage(page + 1);
   };
@@ -105,8 +111,10 @@ const Proyectos = () => {
   }, []);
 
   useEffect(() => {
-    getProjects()
-  }, [page])
+    getProjects();
+  }, [page]);
+
+  // console.log(rol)
 
   return (
     <div className="flex w-full">
@@ -116,7 +124,7 @@ const Proyectos = () => {
           <h1 className="text-[65px] font-bold">Proyectos</h1>
           <button
             onClick={openCreateProjectModanl}
-            className="flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl"
+            className={`flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl ${rol !== "administrator" ? "hidden" : ""}`}
           >
             <BsFillPlusCircleFill className="text-3xl" />
             <p className="text-xl font-bold">Nuevo</p>
@@ -204,10 +212,25 @@ const Proyectos = () => {
                     </td>
                     <td className="text-center">{item.create_date}</td>
                     <td className="text-center">
-                      <button className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3">
+                      <button
+                        className={`bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3 ${
+                          !(
+                            rol === "administrator" ||
+                            rol === "employee" ||
+                            rol === "team leader"
+                          )
+                            ? "hidden"
+                            : ""
+                        }`}
+                      >
                         Detalles
                       </button>
-                      <button className="bg-red-400 text-white px-3 py-1 rounded-md text-sm">
+                      <button
+                        className={`bg-red-400 text-white px-3 py-1 rounded-md text-sm ${
+                          rol !== "administrator" ? "hidden" : ""
+                        }`}
+                        onClick={() => handleDeleteProject(item.id_project)}
+                      >
                         Eliminar
                       </button>
                     </td>
@@ -216,23 +239,27 @@ const Proyectos = () => {
               </tbody>
             </table>
           ) : (
-            <p className="text-4xl font-semibold text-[#A1A1A1] ml-[14rem] mt-[12rem]">
+            <p className="text-4xl text-center font-semibold text-[#A1A1A1] mt-20">
               No se encontro ningun resultado
             </p>
           )}
         </div>
 
         {/* CHANGE PAGES */}
-        <div className="flex gap-x-3 mt-5 justify-center">
+        <div className={`flex gap-x-3 mt-5 justify-center ${teams.length == 0 ? "hidden" : ""}`}>
           <button
-            className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${page == 1 && "bg-gray-100 text-gray-400"}`}
+            className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
+              page == 1 && "bg-gray-100 text-gray-400"
+            }`}
             disabled={page == 1}
             onClick={handlePreviousPage}
           >
             Anterior
           </button>
           <button
-            className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${teams.length <10 && "bg-gray-100 text-gray-400"}`}
+            className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
+              teams.length < 10 && "bg-gray-100 text-gray-400"
+            }`}
             disabled={teams.length < 10}
             onClick={handleNextPage}
           >

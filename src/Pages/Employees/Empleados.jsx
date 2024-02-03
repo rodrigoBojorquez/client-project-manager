@@ -1,5 +1,5 @@
 // EmployeesPage.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import Sidebar from "../../Components/NavBar.jsx";
 import CreateEmployees from "./Forms/CreateEmployees.jsx";
 import EditEmployees from "./Forms/Edit.jsx";
@@ -7,17 +7,19 @@ import { BsFillPlusCircleFill } from "react-icons/bs";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import axiosClient from "../../../axiosConfig.js";
 import Swal from "sweetalert2";
+import GlobalContext from "../../store/context.js";
 
 import { FiEdit } from "react-icons/fi";
 
 const Empleados = () => {
+  const {userData} = useContext(GlobalContext)
   const [showModal, setShowModal] = useState(false);
-  const [rol, setRol] = useState("")
   const [page, setPage] = useState(1)
   const [users, setUsers] = useState([])
   const [showModalE, setShowModalE] = useState(false);
   const [showEmployees, setShowEmployees] = useState([]);
   const [editUser, setEditUser] = useState([]);
+  const userRol = userData.role_name
 
   const openModal = () => {
       setShowModal(true);
@@ -124,10 +126,6 @@ const Empleados = () => {
   }
 
   useEffect(() => {
-    console.log(users); 
-  }, [users]);
-
-  useEffect(() => {
     getUsers()
   }, [page])
 
@@ -135,8 +133,8 @@ const Empleados = () => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="font-Nunito mt-6 mx-5 w-full">
-        <div className="w-full items-baseline flex gap-5 px-5">
+      <div className="font-Nunito py-5 px-10 w-full">
+        <div className="w-full items-baseline flex gap-5">
           <h1 className="text-[65px] font-bold">Empleados</h1>
           <button
             onClick={openModal}
@@ -153,7 +151,7 @@ const Empleados = () => {
           {showModalE &&  <EditEmployees dataFromMainScreen={editUser} closeModal={() => setShowModalE(false)} />}
         </div>
 
-        <div className="flex items-center mt-5 px-5">
+        <div className="flex items-center mt-5">
           <input
             type="text"
             className="w-[400px] h-9 px-4 bg-[#EEE] rounded-s-md focus:outline-[#ccc]"
@@ -163,7 +161,7 @@ const Empleados = () => {
             <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
           </button>
         </div>
-        <div className="mt-5 ml-10 flex flex-col space-y-10 items-center justify-center">
+        <div className="mt-5 flex flex-col space-y-10 items-center justify-center">
           <table className="w-full">
             <tr className="text-[#555] text-xl font-semibold">
               <th className="text-center pb-2">Nombre</th>
@@ -175,16 +173,33 @@ const Empleados = () => {
               {showEmployees.map((employe) => (
 
                 <tr className="border-y border-[#999] h-12" key={employe.id_user}>
-                <td>{employe.username}</td>
-                <td>{employe.email}</td>
-                <td>{employe.speciality}</td>
-                <td className="space-x-5">
-                  <button className=" bg-[#1DAF90] text-white font-semibold py-1 px-4 rounded" id="editar"  onClick={() => {openModalE(employe)}} >
-                    editar
-                  </button>
-                  <button className="bg-red-600 text-white font-semibold py-1 px-4 rounded" onClick={() => deleteEmployees(employe.id_user)}>
-                    eliminar
-                  </button>
+                <td className="text-center">{employe.username}</td>
+                <td className="text-center">{employe.email}</td>
+                <td className="text-center">{employe.speciality}</td>
+                <td className="">
+                  <div className="flex gap-x-3 justify-center">
+                  <button
+                        className={`bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm ${
+                          !(
+                            userRol === "administrator" ||
+                            userRol === "employee" ||
+                            userRol === "team leader"
+                          )
+                            ? "hidden"
+                            : ""
+                        }`}
+                      >
+                        Detalles
+                      </button>
+                      <button
+                        className={`bg-red-400 text-white px-3 py-1 rounded-md text-sm ${
+                          userRol !== "administrator" ? "hidden" : ""
+                        }`}
+                        // onClick={}
+                      >
+                        Eliminar
+                      </button>
+                  </div>
                 </td>
               </tr>
                 ))}
