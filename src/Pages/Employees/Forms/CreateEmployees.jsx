@@ -1,20 +1,27 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import axiosClient from "../../../../axiosConfig.js";
 
-// const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
+const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
 function CreateEmployees({ closeModal }) {
+  const rols = [
+    { id: 1, rol: "administrator" },
+    { id: 2, rol: "team leader" },
+    { id: 3, rol: "employee" },
+    { id: 4, rol: "registrators" },
+    { id: 5, rol: "warehouse admin" },
+  ];
   const [user, setUser] = useState({
     username: "",
     email: "",
     speciality: "",
-    rol: "",
+    rol_fk: "",
   });
   const [error, setError] = useState({
     username: "",
     email: "",
     speciality: "",
-    rol: "",
+    rol_fk: "",
   });
   const handleChangeUserName = (e) => {
     const { value } = e.target;
@@ -41,7 +48,7 @@ function CreateEmployees({ closeModal }) {
     const { value } = e.target;
     setUser({
       ...user,
-      rol: value,
+      rol_fk: value,
     });
   };
 
@@ -51,7 +58,7 @@ function CreateEmployees({ closeModal }) {
       username: "",
       email: "",
       speciality: "",
-      rol: "",
+      rol_fk: "",
     };
 
     if (user.username.trim() === "") {
@@ -73,27 +80,28 @@ function CreateEmployees({ closeModal }) {
     } else if (!expresion.test(user.speciality.trim())) {
       newErrors.speciality = "La especialidad no pude ser un caracter";
     }
-    if (user.rol.trim() === "") {
+    if (user.rol_fk.trim() === "") {
       valid = false;
-      newErrors.rol = "Por favor, ingresa un rol";
-    } else if (!expresion.test(user.rol.trim())) {
-      newErrors.rol = "El rol no pude ser un caracter";
+      newErrors.rol_fk = "Por favor, ingresa un rol";
+    } else if (!expresion.test(user.rol_fk.trim())) {
+      newErrors.rol_fk = "El rol no pude ser un caracter";
     }
     setError(newErrors);
     return valid;
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (validateForm()) {
       try {
-        const response = await axios.post(
-          "http://localhost:8000/project-manager/warehouse",
+        const response = await axiosClient.post(
+          "/user",
           {
             username: user.username,
             email: user.email,
             speciality: user.speciality,
-            rol: user.rol,
+            rol_fk: user.rol_fk,
           },
           {
             headers: {
@@ -109,6 +117,7 @@ function CreateEmployees({ closeModal }) {
         console.error("Error en la solicitud", error.message);
       }
     } else {
+      console.log(`username: ${user.username} and email: ${user.email} and specialiy: ${user.specialiy} and role: ${user.rol_fk}`); 
       console.log("Errores en el formulario");
     }
   };
@@ -159,12 +168,13 @@ function CreateEmployees({ closeModal }) {
             <div className="flex gap-16">
               <div>
                 <p className="text-xl text-[#666] font-semibold">Rol *</p>
-                <input
-                  value={user.rol}
-                  onChange={handleChangeRol}
-                  type="text"
-                  className="w-[250px] h-8 px-2 outline-none border border-[#a9a9a9] rounded-md "
-                />
+                <select value={user.rol_fk} onChange={handleChangeRol}>
+                  {rols.map((rol) => (
+                    <option key={rol.id} value={rol.id}>
+                      {rol.rol}
+                    </option>
+                  ))}
+                </select>
                 <p className="text-sm text-red-600">{error.rol}</p>
               </div>
             </div>

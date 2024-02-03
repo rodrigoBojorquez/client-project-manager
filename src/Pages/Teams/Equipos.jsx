@@ -1,5 +1,5 @@
 // EmployeesPage.jsx
-import { useState, useEffect } from "react";
+import React,{ useState, useEffect } from "react";
 
 import Sidebar from "../../Components/NavBar.jsx";
 import Edit from "./Forms/Edit.jsx";

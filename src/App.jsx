@@ -1,7 +1,8 @@
 import { useRoutes, BrowserRouter, Routes, Route } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import React,{ useContext, useEffect, useState } from "react";
 import GlobalContext from "./store/context.js";
 import axiosClient from "../axiosConfig.js";
+import  {EmployProvider}  from "./store/employContex.jsx";
 
 import Dashboard from "./Pages/Dash/Dashboard.jsx";
 import Employees from "./Pages/Employees/Empleados.jsx";
@@ -77,11 +78,13 @@ function App() {
   }, []);
 
   return (
+    <EmployProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/active/:token" element={<ActivetAcount/>} />,
-        <Route element={<PrivateRoute isAuth={userData.isAuth} />}>
+        {/* <Route element={<PrivateRoute isAuth={userData.isAuth} />}> */}
+        <Route element={<PrivateRoute isAuth={true} />}>
           {/* <AppRoutes /> */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/employees" element={<Employees />} />
@@ -91,6 +94,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </EmployProvider>
   );
 }
 

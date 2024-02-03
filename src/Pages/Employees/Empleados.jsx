@@ -2,20 +2,76 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../../Components/NavBar.jsx";
 import CreateEmployees from "./Forms/CreateEmployees.jsx";
+import EditEmployees from "./Forms/Edit.jsx";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { HiMagnifyingGlass } from "react-icons/hi2";
-import { FiEdit } from "react-icons/fi";
 import axiosClient from "../../../axiosConfig.js";
+import Swal from "sweetalert2";
+
+import { FiEdit } from "react-icons/fi";
 
 const Empleados = () => {
   const [showModal, setShowModal] = useState(false);
   const [rol, setRol] = useState("")
   const [page, setPage] = useState(1)
   const [users, setUsers] = useState([])
+  const [showModalE, setShowModalE] = useState(false);
+  const [showEmployees, setShowEmployees] = useState([]);
+  const [editUser, setEditUser] = useState([]);
 
   const openModal = () => {
-    setShowModal(true);
+      setShowModal(true);
   };
+  
+
+   const getEmployes = async() => {
+    const response = await axiosClient.get('/employees');
+    setShowEmployees(response.data);
+    // console.log(response.data);
+   };
+
+
+   const deleteEmployees = async(id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your file has been deleted.",
+            icon: "success"
+          });
+           await axiosClient.delete(`/user/${id}`);
+           getEmployes();
+        } catch (error) {
+          console.error("Error deleting medication:", error);
+          Swal.fire({
+            title: "Error!",
+            text: "An error occurred while deleting medication.",
+            icon: "error"
+          });
+        }
+      }
+    });
+    
+   }
+   
+   const openModalE = (employe) => {
+    
+    setEditUser(employe);
+    setShowModalE(true);
+  };
+
+   useEffect(() => {
+    getEmployes();
+   },[])
 
   const getUsers = () => {
     axiosClient.get(`/employees`)
@@ -84,6 +140,7 @@ const Empleados = () => {
           <h1 className="text-[65px] font-bold">Empleados</h1>
           <button
             onClick={openModal}
+            id="nuevo"
             className="flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl"
           >
             <BsFillPlusCircleFill className="text-3xl" />
@@ -91,8 +148,9 @@ const Empleados = () => {
           </button>
           {/*sin esto no saaale*/}
           {showModal && (
-            <CreateEmployees closeModal={() => setShowModal(false)} />
+            <CreateEmployees  closeModal={() => setShowModal(false)} />
           )}
+          {showModalE &&  <EditEmployees dataFromMainScreen={editUser} closeModal={() => setShowModalE(false)} />}
         </div>
 
         <div className="flex items-center mt-5 px-5">
@@ -114,34 +172,22 @@ const Empleados = () => {
               <td className="text-center">Acciones</td>
             </tr>
             <tbody>
-              {users.length > 0 ? (
-                users.map((user) => (
-                  <tr key={user.id} className="border-y border-[#999] h-12">
-                    <td className="text-center">{user.username}</td>
-                    <td className="text-center">{user.email}</td>
-                    <td className="text-center">{user.workload ? user.workload : "N/A"}</td>
-                    <td className=" space-x-5">
-                      <div className="flex gap-x-2 justify-center">
-                        <button className=" bg-[#1DAF90] text-white font-semibold py-1 px-4 rounded">
-                          editar
-                        </button>
-                        <button onClick={() => deleteUser(user.id_user)} className="bg-red-600 text-white font-semibold py-1 px-4 rounded">
-                          eliminar
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="4"
-                    className="text-4xl font-semibold text-[#A1A1A1] ml-[14rem] mt-[12rem]"
-                  >
-                    No se encontró ningún resultado
-                  </td>
-                </tr>
-              )}
+              {showEmployees.map((employe) => (
+
+                <tr className="border-y border-[#999] h-12" key={employe.id_user}>
+                <td>{employe.username}</td>
+                <td>{employe.email}</td>
+                <td>{employe.speciality}</td>
+                <td className="space-x-5">
+                  <button className=" bg-[#1DAF90] text-white font-semibold py-1 px-4 rounded" id="editar"  onClick={() => {openModalE(employe)}} >
+                    editar
+                  </button>
+                  <button className="bg-red-600 text-white font-semibold py-1 px-4 rounded" onClick={() => deleteEmployees(employe.id_user)}>
+                    eliminar
+                  </button>
+                </td>
+              </tr>
+                ))}
             </tbody>
           </table>
           <div className="flex gap-x-3 mt-5 justify-center">
