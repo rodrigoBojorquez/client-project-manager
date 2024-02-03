@@ -14,21 +14,19 @@ const Empleados = () => {
   const [showModal, setShowModal] = useState(false);
   const [showModalE, setShowModalE] = useState(false);
   const [showEmployees, setShowEmployees] = useState([]);
+  const [editUser, setEditUser] = useState([]);
 
   const openModal = () => {
       setShowModal(true);
-    
   };
-  const openModalE = () => {
-    setShowModalE(true)
   
-};
 
    const getEmployes = async() => {
     const response = await axiosClient.get('/employees');
     setShowEmployees(response.data);
     // console.log(response.data);
    };
+
 
    const deleteEmployees = async(id) => {
     Swal.fire({
@@ -61,6 +59,12 @@ const Empleados = () => {
     });
     
    }
+   
+   const openModalE = (employe) => {
+    
+    setEditUser(employe);
+    setShowModalE(true);
+  };
 
    useEffect(() => {
     getEmployes();
@@ -82,11 +86,9 @@ const Empleados = () => {
           </button>
           {/*sin esto no saaale*/}
           {showModal && (
-            <CreateEmployees closeModal={() => setShowModal(false)} />
+            <CreateEmployees  closeModal={() => setShowModal(false)} />
           )}
-          {showModalE && (
-            <EditEmployees closeModal={() => setShowModalE(false)} />
-          )}
+          {showModalE &&  <EditEmployees dataFromMainScreen={editUser} closeModal={() => setShowModalE(false)} />}
         </div>
 
         <div className="flex items-center mt-10 ml-10">
@@ -113,7 +115,7 @@ const Empleados = () => {
                 <td>{employe.email}</td>
                 <td>{employe.speciality}</td>
                 <td className="space-x-5">
-                  <button className=" bg-[#1DAF90] text-white font-semibold py-1 px-4 rounded" id="editar"  onClick={openModalE}>
+                  <button className=" bg-[#1DAF90] text-white font-semibold py-1 px-4 rounded" id="editar"  onClick={() => {openModalE(employe)}} >
                     editar
                   </button>
                   <button className="bg-red-600 text-white font-semibold py-1 px-4 rounded" onClick={() => deleteEmployees(employe.id_user)}>

@@ -1,28 +1,48 @@
 import React, { useState, useEffect } from "react";
-import axios from "../../../../axiosConfig.js";
+import axiosClient from "../../../../axiosConfig.js";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
-function EditEmployees({ closeModal }) {
+function EditEmployees({ closeModal, dataFromMainScreen }) {
+  
+  const [showEmployees, setShowEmployees] = useState([]);
+  
   const rols = [
-    { id: 1, rol: "administrator" },
-    { id: 2, rol: "team leader" },
-    { id: 3, rol: "employee" },
-    { id: 4, rol: "registrators" },
-    { id: 5, rol: "warehouse admin" },
+    { id: '1', rol: "administrator" },
+    { id: '2', rol: "team leader" },
+    { id: '3', rol: "employee" },
+    { id: '4', rol: "registrators" },
+    { id: '5', rol: "warehouse admin" },
   ];
+
   const [user, setUser] = useState({
+    id_user: "",
     username: "",
     email: "",
     speciality: "",
     rol_fk: "",
   });
+
   const [error, setError] = useState({
+    user_id: "",
     username: "",
     email: "",
     speciality: "",
     rol_fk: "",
   });
+
+
+  useEffect(() => {
+    setUser({
+      id_user: dataFromMainScreen.id_user,
+      username: dataFromMainScreen.username,
+      email: dataFromMainScreen.email,
+      speciality: dataFromMainScreen.speciality,
+      rol_fk: String(dataFromMainScreen.rol_fk),
+    });
+    
+  }, [dataFromMainScreen]);
+
   const handleChangeUserName = (e) => {
     const { value } = e.target;
     setUser({
@@ -30,6 +50,7 @@ function EditEmployees({ closeModal }) {
       username: value,
     });
   };
+
   const handleChangeEmail = (e) => {
     const { value } = e.target;
     setUser({
@@ -37,6 +58,7 @@ function EditEmployees({ closeModal }) {
       email: value,
     });
   };
+
   const handleChangeSpeciality = (e) => {
     const { value } = e.target;
     setUser({
@@ -44,6 +66,7 @@ function EditEmployees({ closeModal }) {
       speciality: value,
     });
   };
+
   const handleChangeRol = (e) => {
     const { value } = e.target;
     setUser({
@@ -60,7 +83,8 @@ function EditEmployees({ closeModal }) {
       speciality: "",
       rol_fk: "",
     };
-
+    
+    
     if (user.username.trim() === "") {
       valid = false;
       newErrors.username = "Por favor, ingresa el nombre del usuario";
@@ -95,9 +119,10 @@ function EditEmployees({ closeModal }) {
 
     if (validateForm()) {
       try {
-        const response = await axios.put(
-          "/user",
+        const response = await axiosClient.put(
+          `/user/${dataFromMainScreen.id_user}`,
           {
+            id_user:user.id_user,
             username: user.username,
             email: user.email,
             speciality: user.speciality,
@@ -120,6 +145,7 @@ function EditEmployees({ closeModal }) {
       console.log("Errores en el formulario");
     }
   };
+
   return (
     <div className="h-screen w-full flex justify-center items-center bg-black bg-opacity-65 backdrop-blur-sm font-Nunito fixed left-0 top-0 ">
       <div className="bg-white h-[500px] w-auto rounded-md grid">

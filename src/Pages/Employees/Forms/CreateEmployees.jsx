@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "../../../../axiosConfig.js";
+import axiosClient from "../../../../axiosConfig.js";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
@@ -95,7 +95,7 @@ function CreateEmployees({ closeModal }) {
 
     if (validateForm()) {
       try {
-        const response = await axios.post(
+        const response = await axiosClient.post(
           "/user",
           {
             username: user.username,
@@ -117,6 +117,7 @@ function CreateEmployees({ closeModal }) {
         console.error("Error en la solicitud", error.message);
       }
     } else {
+      console.log(`username: ${user.username} and email: ${user.email} and specialiy: ${user.specialiy} and role: ${user.rol_fk}`); 
       console.log("Errores en el formulario");
     }
   };

@@ -43,7 +43,7 @@ var data = {
     labels: [`Cancelado ${showData.canceled}`, `Finalizado ${showData.finished}`,`En curso ${showData.in_course}`,`en pausa ${showData.in_pause}`],
     datasets: [
         {
-            label: 'Popularidad en Navidad',
+            label: '',
             data: [showData.canceled, showData.finished, showData.in_course, showData.in_pause],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',

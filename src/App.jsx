@@ -2,6 +2,7 @@ import { useRoutes, BrowserRouter, Routes, Route } from "react-router-dom";
 import React,{ useContext, useEffect, useState } from "react";
 import GlobalContext from "./store/context.js";
 import axiosClient from "../axiosConfig.js";
+import  {EmployProvider}  from "./store/employContex.jsx";
 
 import Dashboard from "./Pages/Dash/Dashboard.jsx";
 import Employees from "./Pages/Employees/Empleados.jsx";
@@ -77,6 +78,7 @@ function App() {
   }, []);
 
   return (
+    <EmployProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
@@ -91,6 +93,7 @@ function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </EmployProvider>
   );
 }
 
