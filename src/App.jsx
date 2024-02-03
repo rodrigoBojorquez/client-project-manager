@@ -1,5 +1,5 @@
 import { useRoutes, BrowserRouter, Routes, Route } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import React,{ useContext, useEffect, useState } from "react";
 import GlobalContext from "./store/context.js";
 import axiosClient from "../axiosConfig.js";
 

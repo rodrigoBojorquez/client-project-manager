@@ -7,7 +7,7 @@ import { HiOutlineArchiveBox } from "react-icons/hi2";
 import { GoPeople } from "react-icons/go";
 import { FaRegUserCircle } from "react-icons/fa";
 import GlobalContext from "../store/context";
-import { useContext } from "react";
+import React,{ useContext } from "react";
 import { FiLogOut } from "react-icons/fi";
 
 function NavBar() {

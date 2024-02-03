@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React,{ useState } from "react";
 
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { IoPersonCircleOutline } from "react-icons/io5";

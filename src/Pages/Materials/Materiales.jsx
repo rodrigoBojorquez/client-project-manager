@@ -1,6 +1,6 @@
 // EmployeesPage.jsx
-import axios from "axios";
-import { useState, useEffect } from "react";
+import axios from "../../../axiosConfig.js";
+import React,{ useState, useEffect } from "react";
 
 import Sidebar from "../../Components/NavBar.jsx";
 import CreateMaterials from "./Forms/CreateMaterials.jsx";
@@ -29,7 +29,7 @@ const Materiales = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/project-manager/warehouse?page=1"
+          "/warehouse?page=1"
         );
         setData(response.data.data);
         console.log(data);

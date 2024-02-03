@@ -13,7 +13,7 @@ function Dashboard() {
   const getDatachart = async () => {
     const response = await axiosClient.get("/dashboard/pie-chart");
     setShowData(response.data);
-    console.log(response);
+    // console.log(response);
   };
 
   const getMaterials = async () => {

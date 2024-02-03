@@ -1,5 +1,5 @@
 // EmployeesPage.jsx
-import { useState, useEffect } from "react";
+import React,{ useState, useEffect } from "react";
 import axiosClient from "../../../axiosConfig.js";
 
 import Sidebar from "../../Components/NavBar.jsx";

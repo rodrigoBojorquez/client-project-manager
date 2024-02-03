@@ -1,5 +1,6 @@
-import { useState } from "react";
-import axios from "axios";
+import React,{ useState } from "react";
+import axios from "../../../../axiosConfig.js";
+
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
@@ -58,7 +59,7 @@ function CreateMaterials({ closeModal }) {
     if (validateForm()) {
       try {
         const response = await axios.post(
-          "http://localhost:8000/project-manager/warehouse",
+          "/warehouse",
           {
             materialName: material.name,
             quantity: material.quantity,
