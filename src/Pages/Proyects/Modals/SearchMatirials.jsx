@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import axiosClient from "../../../../axiosConfig";
+import React from "react";
 
 const SearchMaterials = ({ closeModalMatirials, setProyecto, proyecto }) => {
   const [search, setSearch] = useState("");
@@ -40,21 +41,21 @@ const SearchMaterials = ({ closeModalMatirials, setProyecto, proyecto }) => {
     setAssignedQuantity(0); // Reset assigned quantity
   };
 
-  // const handleAddMaterial = () => {
-  //   if (selectedMaterial) {
-  //     if (assignedQuantity != NaN && (assignedQuantity <= selectedMaterial.available_quantity) ) {
-  //       const newMaterial = {
-  //         material:  selectedMaterial,
-  //         quantity: assignedQuantity
-  //       }
-  //       setProyecto(prevProject => ({...prevProject, materiales: [...prevProject.materiales, newMaterial]}))
-  //     }
-  //     // console.log(proyecto)
-  //     setSelectedMaterial(null);
-  //     setAssignedQuantity(0);
-  //     closeModalMatirials();
-  //   }
-  // };
+  const handleAddMaterial = () => {
+    if (selectedMaterial) {
+      if (assignedQuantity != NaN && (assignedQuantity <= selectedMaterial.available_quantity) ) {
+        const newMaterial = {
+          material:  selectedMaterial,
+          quantity: assignedQuantity
+        }
+        setProyecto(prevProject => ({...prevProject, materiales: [...prevProject.materiales, newMaterial]}))
+      }
+      // console.log(proyecto)
+      setSelectedMaterial(null);
+      setAssignedQuantity(0);
+      closeModalMatirials();
+    }
+  };
 
   useEffect(() => {
     getMaterials();
@@ -77,24 +78,13 @@ const SearchMaterials = ({ closeModalMatirials, setProyecto, proyecto }) => {
         </div>
         {materials.length > 0 ? (
           <>
-            <ul className="flex flex-col overflow-y-auto h-[300px] mt-5">
+           <ul className="flex flex-col overflow-y-auto h-[300px] mt-5">
               {materials.map((item) => {
-                const materialAgregado = proyecto.materiales.some(
-                  (m) => m.material.id_material === item.id_material
-                );
+                const materialAgregado = proyecto.materiales.some((m) => m.material.id_material === item.id_material);
                 return (
                   <div
                     key={item.id_material}
-                    className={`w-[300px] my-2 border-2 border-[#666] rounded-lg ${
-                      item.available_quantity === 0 || materialAgregado
-                        ? "hidden"
-                        : ""
-                    } ${
-                      selectedMaterial &&
-                      selectedMaterial.id_material === item.id_material
-                        ? "bg-[#ccc]"
-                        : ""
-                    }`}
+                    className={`w-[300px] my-2 border-2 border-[#666] rounded-lg ${(item.available_quantity === 0 || materialAgregado) ? "hidden" : ""} ${selectedMaterial && selectedMaterial.id_material === item.id_material ? "bg-[#ccc]" : ""}`}
                   >
                     <li
                       onClick={() => handleMaterialClick(item)}
