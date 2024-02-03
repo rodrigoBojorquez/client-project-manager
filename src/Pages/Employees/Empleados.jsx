@@ -89,8 +89,8 @@ const Empleados = () => {
   const deleteUser = (id) => {
     axiosClient.delete(`/user/${id}`)
       .then(res => {
-        alert("Usuario elminado")
         getUsers()
+        alert("Usuario elminado")
       })
       .catch(err => {
         console.error(err)
@@ -121,7 +121,7 @@ const Empleados = () => {
           setTeams(formattedProjects);
       });
     } else {
-      getProjects();
+      getUsers();
     }
   }
 
@@ -179,6 +179,7 @@ const Empleados = () => {
                 <td className="">
                   <div className="flex gap-x-3 justify-center">
                   <button
+                        onClick={() => openModalE(employe)}
                         className={`bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm ${
                           !(
                             userRol === "administrator" ||
@@ -189,9 +190,10 @@ const Empleados = () => {
                             : ""
                         }`}
                       >
-                        Detalles
+                        Editar
                       </button>
                       <button
+                        onClick={() => deleteUser(employe.id_user)}
                         className={`bg-red-400 text-white px-3 py-1 rounded-md text-sm ${
                           userRol !== "administrator" ? "hidden" : ""
                         }`}

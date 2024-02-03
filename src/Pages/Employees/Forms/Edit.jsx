@@ -139,7 +139,7 @@ function EditEmployees({ closeModal, dataFromMainScreen }) {
         console.log("Respuesta del servidor:", response.data);
         closeModal();
       } catch (error) {
-        console.error("Error en la solicitud", error.message);
+        console.error(error);
       }
     } else {
       console.log("Errores en el formulario");
