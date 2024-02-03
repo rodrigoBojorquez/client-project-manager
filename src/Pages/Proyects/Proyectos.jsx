@@ -215,7 +215,7 @@ const Proyectos = () => {
                       <button className={`bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3 ${userData.role_name != "administrator" ? "hidden" : ""}`}>
                         Detalles
                       </button>
-                      <button className={`bg-red-400 text-white px-3 py-1 rounded-md text-sm ${(userData.role_name != "administrator" || userData.role_name != "team leader" || userData.role_name != "employee")}`} onClick={() => handleDeleteProject(item.id_project)}>
+                      <button className={`bg-red-400 text-white px-3 py-1 rounded-md text-sm ${(userData.role_name != "administrator" || userData.role_name != "team leader" || userData.role_name != "employee") ? "hidden":""}`} onClick={() => handleDeleteProject(item.id_project)}>
                         Eliminar
                       </button>
                     </td>

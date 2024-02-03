@@ -80,6 +80,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/active/:token" element={<ActivetAcount/>} />,
         <Route element={<PrivateRoute isAuth={userData.isAuth} />}>
           {/* <AppRoutes /> */}
           <Route path="/dashboard" element={<Dashboard />} />
@@ -87,7 +88,6 @@ function App() {
           <Route path="/materials" element={<Materials />} />
           <Route path="/projects" element={<Proyects />} />
           <Route path="/teams" element={<Teams />} />
-          <Route path="/active/:token" element={<ActivetAcount/>} />,
         </Route>
       </Routes>
     </BrowserRouter>
