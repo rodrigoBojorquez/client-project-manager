@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from "react";
 import axiosClient from "../../../axiosConfig.js";
 
 import Sidebar from "../../Components/NavBar.jsx";
-import CreateProjectForm from "./Modals/CreateProject.jsx";
+import CreateProject from "./Modals/CreateProject.jsx"
 import ProjectDetails from "./Modals/ProjectDetails.jsx";
 
 import { BsFillPlusCircleFill } from "react-icons/bs";
@@ -19,7 +19,8 @@ const Proyectos = () => {
   const [teams, setTeams] = useState([]);
   const [showProjectDetails, setProjectDetails] = useState(false);
   const { userData } = useContext(GlobalContext);
-
+  const rol = userData.role_name;
+  // console.log(rol)
 
   const formatDate = (rawDate) => {
     const formatedDate = new Date(rawDate).toLocaleDateString("es-ES", {
@@ -40,7 +41,7 @@ const Proyectos = () => {
           create_date: formatDate(project.create_date),
         }));
 
-        console.log(formattedProjects)
+        // console.log(formattedProjects)
         setTeams(formattedProjects);
       })
       .catch((err) => {
@@ -52,12 +53,12 @@ const Proyectos = () => {
     setPage(1);
     if (search.trim().length >= 3) {
       axiosClient.get(`/projects?page=${page}&search=${search}`).then((res) => {
-          const formattedProjects = res.data.data.map((project) => ({
-            ...project,
-            create_date: formatDate(project.create_date),
-          }));
+        const formattedProjects = res.data.data.map((project) => ({
+          ...project,
+          create_date: formatDate(project.create_date),
+        }));
 
-          setTeams(formattedProjects);
+        setTeams(formattedProjects);
       });
     } else {
       getProjects();
@@ -65,21 +66,22 @@ const Proyectos = () => {
   };
 
   const handleFilter = (state_fk) => {
-    setPage(1)
-    setSearch("")
-    axiosClient.get(`/projects?page=${page}&state=${state_fk}`)
-      .then(res => {
+    setPage(1);
+    setSearch("");
+    axiosClient
+      .get(`/projects?page=${page}&state=${state_fk}`)
+      .then((res) => {
         const formattedProjects = res.data.data.map((project) => ({
           ...project,
           create_date: formatDate(project.create_date),
         }));
 
-        setTeams(formattedProjects);  
+        setTeams(formattedProjects);
       })
-      .catch(err => {
-        console.error(err)
-      })
-  }
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   const openCreateProjectModanl = () => {
     setCreateProjectShowModal(true);
@@ -92,29 +94,30 @@ const Proyectos = () => {
   const handlePreviousPage = () => {
     setPage(page - 1);
   };
-  
+
   const handleNextPage = () => {
     setPage(page + 1);
   };
 
   const handleDeleteProject = (id) => {
-    axiosClient.delete(`/projects/${id}`)
-      .then(res => {
-        alert("Projecto eliminado con exito")
-        getProjects()
+    axiosClient
+      .delete(`/projects/${id}`)
+      .then((res) => {
+        alert("Projecto eliminado con exito");
+        getProjects();
       })
-      .catch(err => {
-        console.error(err)
-      })
-  }
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   useEffect(() => {
     getProjects();
   }, []);
 
   useEffect(() => {
-    getProjects()
-  }, [page])
+    getProjects();
+  }, [page]);
 
   return (
     <div className="flex w-full">
@@ -212,10 +215,25 @@ const Proyectos = () => {
                     </td>
                     <td className="text-center">{item.create_date}</td>
                     <td className="text-center">
-                      <button className={`bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3 ${userData.role_name != "administrator" ? "hidden" : ""}`}>
+                      <button
+                        className={`bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3 ${
+                          !(
+                            rol === "administrator" ||
+                            rol === "employee" ||
+                            rol === "team leader"
+                          )
+                            ? "hidden"
+                            : ""
+                        }`}
+                      >
                         Detalles
                       </button>
-                      <button className={`bg-red-400 text-white px-3 py-1 rounded-md text-sm ${(userData.role_name != "administrator" || userData.role_name != "team leader" || userData.role_name != "employee") ? "hidden":""}`} onClick={() => handleDeleteProject(item.id_project)}>
+                      <button
+                        className={`bg-red-400 text-white px-3 py-1 rounded-md text-sm ${
+                          rol !== "administrator" ? "hidden" : ""
+                        }`}
+                        onClick={() => handleDeleteProject(item.id_project)}
+                      >
                         Eliminar
                       </button>
                     </td>
@@ -233,14 +251,18 @@ const Proyectos = () => {
         {/* CHANGE PAGES */}
         <div className="flex gap-x-3 mt-5 justify-center">
           <button
-            className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${page == 1 && "bg-gray-100 text-gray-400"}`}
+            className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
+              page == 1 && "bg-gray-100 text-gray-400"
+            }`}
             disabled={page == 1}
             onClick={handlePreviousPage}
           >
             Anterior
           </button>
           <button
-            className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${teams.length <10 && "bg-gray-100 text-gray-400"}`}
+            className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
+              teams.length < 10 && "bg-gray-100 text-gray-400"
+            }`}
             disabled={teams.length < 10}
             onClick={handleNextPage}
           >
@@ -250,7 +272,7 @@ const Proyectos = () => {
       </div>
       {showCreateProjectModal && (
         <div className="h-screen absolute w-full">
-          <CreateProjectForm
+          <CreateProject
             closeCreateProjectModanl={closeCreateProjectModanl}
           />
         </div>
