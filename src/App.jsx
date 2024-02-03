@@ -6,20 +6,22 @@ import axiosClient from "../axiosConfig.js";
 import Dashboard from "./Pages/Dash/Dashboard.jsx";
 import Employees from "./Pages/Employees/Empleados.jsx";
 import Materials from "./Pages/Materials/Materiales.jsx";
-import Proyects from './Pages/Proyects/Proyectos.jsx'
+import Proyects from "./Pages/Proyects/Proyectos.jsx";
 import Teams from "./Pages/Teams/Equipos.jsx";
-import Login from './Pages/Login/Login.jsx';
+import Login from "./Pages/Login/Login.jsx";
 import PrivateRoute from "./Components/PrivateRoute.jsx";
+import ActivetAcount from "./Components/ActivetAcount.jsx";
 
 const AppRoutes = () => {
   let routes = useRoutes([
-    {path: '/dashboard', element: <Dashboard></Dashboard>},
-    {path: '/employees', element: <Employees></Employees>},
-    {path: '/materials', element: <Materials></Materials>},
-    {path: '/projects', element: <Proyects></Proyects>},
-    {path: '/teams', element: <Teams></Teams>},
-  ])
-  return routes
+    { path: "/dashboard", element: <Dashboard></Dashboard> },
+    { path: "/employees", element: <Employees></Employees> },
+    { path: "/materials", element: <Materials></Materials> },
+    { path: "/projects", element: <Proyects></Proyects> },
+    { path: "/teams", element: <Teams></Teams> },
+    { path: "/active/:token", element: <Activate></Activate> },
+  ]);
+  return routes;
 };
 
 function App() {
@@ -85,6 +87,7 @@ function App() {
           <Route path="/materials" element={<Materials />} />
           <Route path="/projects" element={<Proyects />} />
           <Route path="/teams" element={<Teams />} />
+          <Route path="/active/:token" element={<ActivetAcount/>} />,
         </Route>
       </Routes>
     </BrowserRouter>
