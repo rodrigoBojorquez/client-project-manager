@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import React,{ useState, useEffect } from "react";
+import axios from "../../../../axiosConfig.js";
 
 const expresionNombre = /^[^\d!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 const expresionCantidad = /^\d+$/;
@@ -58,7 +58,7 @@ const EditMaterials = ({ closeModalEdit, itemToEdit }) => {
     if (validateForm()) {
       try {
         const response = await axios.put(
-          `http://localhost:8000/project-manager/warehouse/${itemToEdit.id_material}`,
+          `/warehouse/${itemToEdit.id_material}`,
           {
             material_name: materialName,
             quantity: materialQuantity,

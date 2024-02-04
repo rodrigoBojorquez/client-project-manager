@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import axiosClient from "../../../../axiosConfig";
+import React from "react";
 
 const SearchMaterials = ({ closeModalMatirials, setProyecto, proyecto }) => {
   const [search, setSearch] = useState("");

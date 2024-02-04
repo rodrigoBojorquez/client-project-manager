@@ -7,7 +7,7 @@ import { HiOutlineArchiveBox } from "react-icons/hi2";
 import { GoPeople } from "react-icons/go";
 import { FaRegUserCircle } from "react-icons/fa";
 import GlobalContext from "../store/context";
-import { useContext } from "react";
+import React,{ useContext } from "react";
 import { FiLogOut } from "react-icons/fi";
 
 function NavBar() {
@@ -115,7 +115,7 @@ function NavBar() {
           )}
       </ul>
       <div className="flex justify-between text-xl gap-3 items-center m-5">
-        <div className="flex items-center">
+        <div className="flex gap-x-3 items-center">
           <FaRegUserCircle className="text-3xl" />
           <h2 className="font-semibold">{userData.username}</h2>
         </div>

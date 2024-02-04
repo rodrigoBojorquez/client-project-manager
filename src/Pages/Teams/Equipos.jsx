@@ -1,5 +1,6 @@
 // EmployeesPage.jsx
-import { useState, useEffect } from "react";
+import React,{ useState, useEffect, useContext } from "react";
+import GlobalContext from "../../store/context.js";
 
 import Sidebar from "../../Components/NavBar.jsx";
 import Edit from "./Forms/Edit.jsx";
@@ -56,6 +57,8 @@ const Equipos = () => {
   const [showModal, setShowModal] = useState(false);
   const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
   const [selectedEquipo, setSelectedEquipo] = useState(null);
+  const { userData } = useContext(GlobalContext)
+  const rol = userData.role_name
 
   const openModal = (equipo) => {
     setSelectedEquipo(equipo);
@@ -91,19 +94,19 @@ const Equipos = () => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="font-Nunito mt-6 ml-8">
+      <div className="font-Nunito py-5 px-10">
         <div className="w-full items-baseline flex gap-5">
           <h1 className="text-[65px] font-bold">Equipos</h1>
           <button
           type="button"
             onClick={openCreateTeamModal}
-            className="flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl"
+            className={`flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl ${rol != "administrator" ? "hidden" : ""}`}
           >
             <BsFillPlusCircleFill className="text-3xl" />
             <p className="text-xl font-bold">Nuevo</p>
           </button>
         </div>
-        <div className="flex items-center mt-10 ml-10">
+        <div className="flex items-center mt-10">
           <input
             onChange={searchTeam}
             value={search}
@@ -113,14 +116,14 @@ const Equipos = () => {
           />
           <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
         </div>
-        <div className="mt-5 ml-10 flex items-center justify-center">
+        <div className="mt-5 flex items-center justify-center">
           {results.length > 0 ? (
             <table>
               <tr className="text-[#555] text-xl font-semibold">
-                <th className="pr-[14rem] pb-4">Nombre del equipo</th>
+                <th className="pr-[14rem] pb-4">Nombre</th>
                 <th className="pr-[18rem] pb-4">Lider</th>
                 <th className="pr-[4rem] pb-4">Num. Miembros</th>
-                <td className="pr-[8rem] pb-4">&nbsp;</td>
+                <td className="pr-[8rem] pb-4">Acciones</td>
               </tr>
               <tbody>
                 {results.map((item, index) => (
@@ -145,7 +148,7 @@ const Equipos = () => {
               </tbody>
             </table>
           ) : (
-            <p className="text-4xl font-semibold text-[#A1A1A1] ml-[18rem] mt-[12rem]">
+            <p className="text-4xl font-semibold text-[#A1A1A1] mb-20">
               No se encontro ningun resultado
             </p>
           )}

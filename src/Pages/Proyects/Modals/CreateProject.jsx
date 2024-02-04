@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import React from "react";
 import ModalMatirials from "../Modals/SearchMatirials.jsx";
 import { RxCross2 } from "react-icons/rx";
 import axiosClient from "../../../../axiosConfig.js";
@@ -74,7 +75,7 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
   const removeMaterial = useCallback(
     (materialId) => {
       const nuevosMateriales = proyecto.materiales.filter(
-        (item) => item.material.material_id !== materialId
+        (item) => item.material.id_material !== materialId
       );
       setProyecto((prevProject) => ({
         ...prevProject,
@@ -156,7 +157,7 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
           </div>
           <div className="flex flex-col p-5 w-full">
             <div className="flex flex-col gap-3 justify-center mb-16">
-              <p>Materiales</p>
+              <p className="font-bold">Materiales</p>
               <div className="flex flex-col justify-center items-center w-full gap-5">
                 <table className="">
                   <tr className="text-lg font-semibold">
@@ -166,7 +167,7 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
                   {proyecto.materiales.length > 0 ? (
                     proyecto.materiales.map((item) => (
                       <tr
-                        key={item.material.material_id}
+                        key={item.material.id_material}
                         className="text-sm border-y border-[#999] h-10"
                       >
                         <td>{item.material.material_name}</td>
@@ -176,7 +177,7 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
                           <button
                             type="button"
                             onClick={() =>
-                              removeMaterial(item.material.material_id)
+                              removeMaterial(item.material.id_material)
                             }
                             className="text-red-600 hover:underline ml-2 text-2xl"
                           >
