@@ -3,7 +3,7 @@ import axiosClient from "../../../../axiosConfig.js";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
-function CreateEmployees({ closeModal }) {
+function CreateEmployees({ closeModal, getUsers }) {
   const rols = [
     { id: 1, rol: "Administrador" },
     { id: 2, rol: "Lider de equipo" },
@@ -15,7 +15,7 @@ function CreateEmployees({ closeModal }) {
     username: "",
     email: "",
     speciality: "",
-    rol_fk: "",
+    rol_fk: 1,
   });
   const [error, setError] = useState({
     username: "",
@@ -66,7 +66,7 @@ function CreateEmployees({ closeModal }) {
       newErrors.username = "Por favor, ingresa el nombre del usuario";
     } else if (!expresion.test(user.username.trim())) {
       valid = false;
-      newErrors.name = "El nombre no puede iniciar con caracteres especiales.";
+      newErrors.username = "El nombre no puede iniciar con caracteres especiales.";
     }
     if (user.email.trim() === "") {
       valid = false;
@@ -94,25 +94,20 @@ function CreateEmployees({ closeModal }) {
     e.preventDefault();
 
     if (validateForm()) {
-      try {
-        const response = await axiosClient.post(
-          "/user",
-          {
-            username: user.username,
-            email: user.email,
-            speciality: user.speciality,
-            rol_fk: user.rol_fk,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        closeModal();
-      } catch (error) {
-        console.error(error);
-      }
+      axiosClient
+        .post("/user", {
+          username: user.username,
+          email: user.email,
+          speciality: user.speciality,
+          rol_fk: user.rol_fk,
+        })
+        .then((res) => {
+          getUsers();
+          closeModal();
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     }
   };
   return (
@@ -125,7 +120,9 @@ function CreateEmployees({ closeModal }) {
           <h2 className="text-4xl font-semibold">Nuevo Empleado</h2>
           <div className="flex gap-10">
             <div>
-              <p className="text-xl text-[#666] font-semibold">Nombre completo *</p>
+              <p className="text-xl text-[#666] font-semibold">
+                Nombre completo *
+              </p>
               <input
                 value={user.username}
                 onChange={handleChangeUserName}
@@ -159,17 +156,21 @@ function CreateEmployees({ closeModal }) {
               <p className="text-sm text-red-600">{error.speciality}</p>
             </div>
 
-              <div className="w-full">
-                <p className="text-xl text-[#666] font-semibold">Rol *</p>
-                <select value={user.rol_fk} onChange={handleChangeRol} className="w-full text-center border-[1.5px] border-[#a9a9a9] outline-none rounded-md px-2 py-1">
-                  {rols.map((rol) => (
-                    <option key={rol.id} value={rol.id}>
-                      {rol.rol}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-sm text-red-600">{error.rol}</p>
-              </div>
+            <div className="w-full">
+              <p className="text-xl text-[#666] font-semibold">Rol *</p>
+              <select
+                value={user.rol_fk}
+                onChange={handleChangeRol}
+                className="w-full text-center border-[1.5px] border-[#a9a9a9] outline-none rounded-md px-2 py-1"
+              >
+                {rols.map((rol) => (
+                  <option key={rol.id} value={rol.id}>
+                    {rol.rol}
+                  </option>
+                ))}
+              </select>
+              <p className="text-sm text-red-600">{error.rol_fk}</p>
+            </div>
           </div>
           <div className="flex items-center justify-center gap-5">
             <button

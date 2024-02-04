@@ -1,38 +1,8 @@
-import React,{ useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { IoPersonCircleOutline } from "react-icons/io5";
-
-const equipos = [
-  {
-    nombreEquipo: "Equipo A",
-    lider: "Juan Pérez",
-  },
-  {
-    nombreEquipo: "Equipo B",
-    lider: "María Rodríguez",
-  },
-  {
-    nombreEquipo: "Equipo C",
-    lider: "Carlos Sánchez",
-  },
-  {
-    nombreEquipo: "Equipo C",
-    lider: "Carlos Sánchez",
-  },
-  {
-    nombreEquipo: "Equipo C",
-    lider: "Carlos Sánchez",
-  },
-  {
-    nombreEquipo: "Equipo C",
-    lider: "Carlos Sánchez",
-  },
-  {
-    nombreEquipo: "Equipo C",
-    lider: "Carlos Sánchez",
-  },
-];
+import axiosClient from "../../../../axiosConfig";
 
 const normalizeString = (str) =>
   str
@@ -42,42 +12,70 @@ const normalizeString = (str) =>
 
 const PeopleSearchBar = ({ closeLiderModal }) => {
   const [search, setSearch] = useState("");
+  const [results, setResults] = useState([]);
 
-  const searchTeam = (e) => {
-    setSearch(normalizeString(e.target.value));
+  // const searchTeam = (e) => {
+  //   setSearch(normalizeString(e.target.value));
+  // };
+
+  // //Metodo para filtrar por nombre
+  // const results = !search
+  //   ? equipos
+  //   : equipos.filter(
+  //       (dato) =>
+  //         normalizeString(dato.nombreEquipo).includes(search) ||
+  //         normalizeString(dato.lider).includes(search)
+  //     );
+
+  const getUsers = () => {
+    axiosClient
+      .get(`/employees?page=1&rol=2`)
+      .then((res) => {
+        setResults(res.data.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
-  //Metodo para filtrar por nombre
-  const results = !search
-    ? equipos
-    : equipos.filter(
-        (dato) =>
-          normalizeString(dato.nombreEquipo).includes(search) ||
-          normalizeString(dato.lider).includes(search)
-      );
+  const handleSearch = () => {
+    if (search.trim().length >= 3) {
+      axiosClient.get(`/employees?page=1&search=${search}`).then((res) => {
+        setTeams(res.data.data);
+      });
+    } else {
+      getProjects();
+    }
+  };
+
+  useEffect(() => {
+    getUsers()
+  }, [])
 
   return (
     <div className="bg-black h-screen w-full flex flex-col items-center justify-center bg-opacity-65">
       <div className=" font-Nunito flex flex-col items-center bg-white w-[400px] h-[450px] rounded-lg">
         <div className="flex items-center mt-5">
           <input
-            onChange={searchTeam}
+            onChange={(e) => setSearch(e.target.value)}
             value={search}
             type="text"
             className="w-[300px] h-9 px-4 bg-[#EEE] rounded-s-md focus:outline-[#ccc]"
             placeholder="Buscar equipo/lider"
           />
-          <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
+          <button onClick={handleSearch}>
+            <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
+          </button>
         </div>
         <ul className="flex flex-col overflow-y-auto h-[300px] mt-5">
-          {results.map((item, index) => (
+          {results.map((item) => (
             <div
-              key={index}
+              key={item.id_user}
               className="w-[300px] my-2 border-2 border-[#666] rounded-lg"
             >
               <li className="text-lg font-Outfit font-semibold flex items-center gap-2 py-3 px-10 rounded-lg hover:bg-[#eee]">
                 <IoPersonCircleOutline className="text-xl" />
-                {item.lider}
+                {item.username}
               </li>
             </div>
           ))}

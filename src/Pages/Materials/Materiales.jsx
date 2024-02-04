@@ -14,6 +14,7 @@ const Materiales = () => {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("")
 
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [itemToEdit, setItemToEdit] = useState(null);
@@ -69,20 +70,29 @@ const Materiales = () => {
     }
   };
 
+  const handleSearch = () => {
+    setPage(1);
+    if (search.trim().length >= 3) {
+      setPage(1)
+      axiosClient.get(`/warehouse?page=${page}&search=${search}`)
+        .then((res) => {
+          // console.log(res)
+        setData(res.data.data);
+        })
+        .catch(err => {
+          console.error(err)
+        })
+    } else {
+      getData();
+    }
+  };
+
   const handlePreviousPage = () => {
     setPage(page - 1);
   };
 
   const handleNextPage = async () => {
-    try {
-      setLoading(true); // Set loading state to true
-      await getData(); // Fetch data
-      setPage(page + 1); // Update page after fetching data
-    } catch (error) {
-      console.error("Error fetching data", error.message);
-    } finally {
-      setLoading(false); // Set loading state to false regardless of success or failure
-    }
+    setPage(page + 1)
   };
 
   useEffect(() => {
@@ -107,7 +117,7 @@ const Materiales = () => {
             <p className="text-xl font-bold">Nuevo</p>
           </button>
           {showModal && (
-            <CreateMaterials closeModal={() => setShowModal(false)} />
+            <CreateMaterials closeModal={() => setShowModal(false)} getData={getData} />
           )}
         </div>
         <div className="flex items-center mt-5">
@@ -115,11 +125,15 @@ const Materiales = () => {
             type="text"
             className="w-[400px] h-9 px-4 bg-[#EEE] rounded-s-md focus:outline-[#ccc]"
             placeholder="Buscar material"
+            onChange={e => setSearch(e.target.value)}
+            value={search}
           />
-          <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
+          <button onClick={handleSearch}>
+            <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
+          </button>
         </div>
         <div className="mt-3 flex items-center justify-center">
-          {data.length > 0 ? (
+          {data ? (
             <table className="mt-5 w-full">
               <tr className="text-[#555] text-xl font-semibold">
                 <th className="">Nombre del material</th>
@@ -161,7 +175,7 @@ const Materiales = () => {
           )}
         </div>
         <div className="flex gap-x-3 mt-5 justify-center">
-          {/* <button
+          <button
             className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
               page == 1 && "bg-gray-100 text-gray-400"
             }`}
@@ -174,11 +188,11 @@ const Materiales = () => {
             className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
               data.length < 10 && "bg-gray-100 text-gray-400"
             }`}
-            disabled={loading || data.length < 10}
+            disabled={data.length < 10}
             onClick={handleNextPage}
           >
             Siguiente
-          </button> */}
+          </button>
         </div>
       </div>
       {showConfirmation && (
@@ -211,6 +225,7 @@ const Materiales = () => {
           <EditMaterials
             itemToEdit={itemToEdit}
             closeModalEdit={() => setShowModalEdit(false)}
+            getData={getData}
           />
         </div>
       )}

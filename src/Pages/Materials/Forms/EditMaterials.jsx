@@ -1,32 +1,18 @@
-import React,{ useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "../../../../axiosConfig.js";
 
 const expresionNombre = /^[^\d!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 const expresionCantidad = /^\d+$/;
 
-const EditMaterials = ({ closeModalEdit, itemToEdit }) => {
-  const [initialMaterial, setInitialMaterial] = useState({
-    name: itemToEdit ? itemToEdit.material_name : "",
-    quantity: itemToEdit ? itemToEdit.quantity : "",
-  });
-
-  const [materialName, setMaterialName] = useState("");
-  const [materialQuantity, setMaterialQuantity] = useState("");
+const EditMaterials = ({ closeModalEdit, itemToEdit, getData }) => {
+  const [formData, setformData] = useState({
+    ...itemToEdit
+  })
 
   const [error, setError] = useState({
     name: "",
     quantity: "",
   });
-
-  const handleNameChange = (e) => {
-    const { value } = e.target;
-    setMaterialName(value);
-  };
-
-  const handleQuantityChange = (e) => {
-    const { value } = e.target;
-    setMaterialQuantity(value);
-  };
 
   const validateForm = () => {
     let valid = true;
@@ -35,18 +21,16 @@ const EditMaterials = ({ closeModalEdit, itemToEdit }) => {
       quantity: "",
     };
 
-    if (materialName.trim() === "") {
+    if (formData.material_name.trim() === "") {
       valid = false;
       newErrors.name = "Por favor, ingresa el nombre del material";
-    } else if (!expresionNombre.test(materialName.trim())) {
+    } else if (!expresionNombre.test(formData.material_name.trim())) {
       valid = false;
       newErrors.name = "El nombre no puede iniciar con caracteres especiales.";
     }
-    if (materialQuantity.trim() === "") {
+    if (formData.quantity <= 0) {
       valid = false;
       newErrors.quantity = "Por favor, ingresa una cantidad";
-    } else if (!expresionCantidad.test(materialQuantity.trim())) {
-      newErrors.quantity = "La cantidad no pude ser un caracter";
     }
     setError(newErrors);
     return valid;
@@ -54,33 +38,17 @@ const EditMaterials = ({ closeModalEdit, itemToEdit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       try {
         const response = await axios.put(
           `/warehouse/${itemToEdit.id_material}`,
           {
-            material_name: materialName,
-            quantity: materialQuantity,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
+            materialName: formData.material_name,
+            quantity: formData.quantity,
           }
         );
-        console.log("Material editado", {
-          material_name: materialName,
-          quantity: materialQuantity,
-        });
-        console.log("Respuesta del server", response.data);
-        // Update the state to reflect the changes
-        setInitialMaterial({
-          name: materialName,
-          quantity: materialQuantity,
-        });
-        console.log(initialMaterial.name);
-
+        getData();
         closeModalEdit();
       } catch (error) {
         console.error("Error en la solicitud", error.message);
@@ -100,9 +68,8 @@ const EditMaterials = ({ closeModalEdit, itemToEdit }) => {
               Nombre *
             </label>
             <input
-              placeholder={initialMaterial.name}
-              value={materialName}
-              onChange={handleNameChange}
+              value={formData.material_name}
+              onChange={e => setformData({...formData, material_name: e.target.value})}
               type="text"
               className="w-[390px] h-8 px-2 border border-[#a9a9a9] rounded-md placeholder-[#666]"
             />
@@ -115,9 +82,8 @@ const EditMaterials = ({ closeModalEdit, itemToEdit }) => {
               <p className="text-xl text-[#666] font-semibold">Cantidad *</p>
               <div className="flex gap-1">
                 <input
-                  placeholder={initialMaterial.quantity}
-                  value={materialQuantity}
-                  onChange={handleQuantityChange}
+                  value={formData.quantity}
+                  onChange={e => setformData({...formData, quantity: parseInt(e.target.value)})}
                   type="number"
                   className="w-[150px] h-8 px-2 border border-[#a9a9a9] rounded-md "
                 />

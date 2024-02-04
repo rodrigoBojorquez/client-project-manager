@@ -9,42 +9,7 @@ import CreateTeam from "./Forms/CreateTeam.jsx";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
 import { HiMagnifyingGlass } from "react-icons/hi2";
-
-const equipos = [
-  {
-    nombreEquipo: "Equipo A",
-    lider: "Juan Pérez",
-    numMiembros: 5,
-    miembros: [
-      { nombre: "Marcos", especialidad: "Diseñador principal" },
-      { nombre: "Javier", especialidad: "Analista" },
-      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
-      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
-      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
-      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
-    ],
-  },
-  {
-    nombreEquipo: "Equipo B",
-    lider: "María Rodríguez",
-    numMiembros: 8,
-    miembros: [
-      { nombre: "Marcos", especialidad: "Diseñador principal" },
-      { nombre: "Javier", especialidad: "Analista" },
-      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
-    ],
-  },
-  {
-    nombreEquipo: "Equipo C",
-    lider: "Carlos Sánchez",
-    numMiembros: 6,
-    miembros: [
-      { nombre: "Marcos", especialidad: "Diseñador principal" },
-      { nombre: "Javier", especialidad: "Analista" },
-      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
-    ],
-  },
-];
+import axiosClient from "../../../axiosConfig.js";
 
 const normalizeString = (str) =>
   str
@@ -58,6 +23,8 @@ const Equipos = () => {
   const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
   const [selectedEquipo, setSelectedEquipo] = useState(null);
   const { userData } = useContext(GlobalContext)
+  const [page, setPage] = useState(1)
+  const [results, setResults] = useState([])
   const rol = userData.role_name
 
   const openModal = (equipo) => {
@@ -82,14 +49,32 @@ const Equipos = () => {
     setSearch(normalizeString(e.target.value));
   };
 
-  //Metodo para filtrar por nombre
-  const results = !search
-    ? equipos
-    : equipos.filter(
-        (dato) =>
-          normalizeString(dato.nombreEquipo).includes(search) ||
-          normalizeString(dato.lider).includes(search)
-      );
+  const handleNextPage = () => {
+    setPage(page + 1)
+  }
+   
+  const handlePreviousPage = () => {
+    setPage(page - 1)
+  }
+
+  const getTeams = () => {
+    axiosClient.get(`/team?page=${page}`)
+      .then(res => {
+        console.log(res.data.data)
+        setResults(res.data.data)
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
+
+  useEffect(() => {
+    getTeams()
+  }, [])
+
+  useEffect(() => {
+    getTeams
+  }, [page])
 
   return (
     <div className="flex">
@@ -128,9 +113,9 @@ const Equipos = () => {
               <tbody>
                 {results.map((item, index) => (
                   <tr key={index} className="border-y border-[#999] h-12">
-                    <td>{item.nombreEquipo}</td>
-                    <td>{item.lider}</td>
-                    <td className="pl-14">{item.numMiembros}</td>
+                    <td>{item.team_name}</td>
+                    <td>{item.leader_username}</td>
+                    <td className="pl-14">{item.project_info.num_members}</td>
                     <td className="flex h-auto items-center gap-5 mt-2">
                       <button
                         onClick={() => openModal(item)}

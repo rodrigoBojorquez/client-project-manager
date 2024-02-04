@@ -7,8 +7,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     https: {
-      key: config.KEY_LOCATION,
-      cert: config.CERT_LOCATION
+      key: "C:/Users/rbojo/OneDrive/Escritorio/certificados/cert.key",
+      cert: "C:/Users/rbojo/OneDrive/Escritorio/certificados/cert.crt"
     }
   }
 })
