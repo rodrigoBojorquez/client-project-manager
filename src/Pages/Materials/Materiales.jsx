@@ -1,6 +1,6 @@
 // EmployeesPage.jsx
 import axios from "../../../axiosConfig.js";
-import React,{ useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import Sidebar from "../../Components/NavBar.jsx";
 import CreateMaterials from "./Forms/CreateMaterials.jsx";
@@ -20,13 +20,13 @@ const Materiales = () => {
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
-  const [loading, setLoading] = useState(false); 
-
+  const [loading, setLoading] = useState(false);
 
   const getData = async () => {
     axiosClient
       .get(`/warehouse?page=${page}`)
       .then((res) => {
+        console.log("Axios response",res);
         setData(res.data.data);
       })
       .catch((err) => {
