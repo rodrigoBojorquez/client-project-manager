@@ -27,8 +27,8 @@ const Empleados = () => {
   
 
    const getEmployes = async() => {
-    const response = await axiosClient.get('/employees');
-    setShowEmployees(response.data);
+    const response = await axiosClient.get(`/employees?page=${page}`);
+    setShowEmployees(response.data.data);
     // console.log(response.data);
    };
 
