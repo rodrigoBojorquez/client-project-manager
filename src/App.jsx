@@ -10,6 +10,7 @@ import Materials from "./Pages/Materials/Materiales.jsx";
 import Proyects from "./Pages/Proyects/Proyectos.jsx";
 import Teams from "./Pages/Teams/Equipos.jsx";
 import Login from "./Pages/Login/Login.jsx";
+import Error from "./Pages/Error/Error.jsx";
 import PrivateRoute from "./Components/PrivateRoute.jsx";
 import ActivetAcount from "./Components/ActivetAcount.jsx";
 
@@ -91,6 +92,7 @@ function App() {
           <Route path="/materials" element={<Materials />} />
           <Route path="/projects" element={<Proyects />} />
           <Route path="/teams" element={<Teams />} />
+          <Route path="/error" element={<Error />} />
         </Route>
       </Routes>
     </BrowserRouter>
