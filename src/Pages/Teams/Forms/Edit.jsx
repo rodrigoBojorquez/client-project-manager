@@ -4,15 +4,18 @@ import { AiOutlineUsergroupAdd, AiOutlineUserAdd } from "react-icons/ai";
 import { TfiReload } from "react-icons/tfi";
 import { PiUserCircleLight } from "react-icons/pi";
 import { GoTrash } from "react-icons/go";
+import { SlFolder } from "react-icons/sl";
 import PeopleSearchBar from "../PeopleSearchBar/PeopleSearchBar";
 import LeaderSearchBar from "../PeopleSearchBar/LeaderSearchBar";
+import ProjectSearchModal from "../PeopleSearchBar/ProjectSearchModal";
 import axiosClient from "../../../../axiosConfig";
 
-function Edit({ closeModal, equipoData }) {
+function Edit({ closeModal, equipoData, getTeams }) {
   // Local state for edits
   const [formData, setFormData] = useState({ ...equipoData });
   const [showPeopleSearch, setShowPeopleSearch] = useState(false);
   const [showLeaderSearch, setShowLeaderSearch] = useState(false)
+  const [showProjectSearch, setShowProjectSearch] = useState(false) 
 
   // Handle member deletion
   const handleDeleteMember = (id_user) => {
@@ -30,14 +33,26 @@ function Edit({ closeModal, equipoData }) {
     setShowPeopleSearch(true);
   };
 
-  const handleEditTeam = () => {
-    // axiosClient.put(``)
-    //   .then(res => {
-
-    //   })
-    //   .catch(err => {
-    //     console.error(err)
-    //   })
+  const handleEditTeam = (e, id) => {
+    e.preventDefault()
+    const membersArr = formData.team_members_info.map((member) => member.id_user)
+    const formatedInfo = {
+      teamName: formData.team_name,
+      projectId: formData.project_info.id_project,
+      leaderId: formData.leader_id,
+      members: membersArr
+    }
+    console.log(id)
+    axiosClient.put(`/team/${id}`, formatedInfo)
+      .then(res => {
+        console.log(res)
+        // getTeams()
+        // closeModal()
+      })
+      .catch(err => {
+        console.error(err)
+      })
+    // console.log(formatedInfo)
   }
 
   // Handle saving changes
@@ -65,6 +80,7 @@ function Edit({ closeModal, equipoData }) {
             />
           </div>
           <div className="my-6">
+            <div>
             <p className="text-xl text-[#666] font-semibold">Lider *</p>
             <div className="flex gap-6">
               <div className=" font-Outfit">
@@ -74,6 +90,14 @@ function Edit({ closeModal, equipoData }) {
               <button type="button" onClick={() => setShowLeaderSearch(true)} className="flex gap-2 items-center text- text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] font-semibold border-2 border-[#1DAF90] px-2 rounded-md">
                 <TfiReload className="text-xl" />
                 Cambiar
+              </button>
+            </div>
+            </div>
+            <div className="mt-5">
+              <p className="text-xl text-[#666] font-semibold">Proyecto</p>
+              <button onClick={setShowProjectSearch} className="flex gap-2 items-center text-lg text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] font-semibold border-2 border-[#1DAF90] px-2 py-1 rounded-md">
+                <SlFolder className="text-xl font-semibold" />
+                Asignar proyecto
               </button>
             </div>
           </div>
@@ -114,7 +138,7 @@ function Edit({ closeModal, equipoData }) {
           </div>
           <div className="flex items-center justify-center gap-6 mt-5">
             <button
-              onClick={() => handleEditTeam(formData.id_team)}
+              onClick={e => handleEditTeam(e, formData.id_team)}
               type="submit"
               className="text-xl text-[#1DAF90] hover:text-white font-semibold border-2 border-[#1DAF90] hover:bg-[#1DAF90] px-3 py-2 rounded-md"
             >
@@ -131,7 +155,7 @@ function Edit({ closeModal, equipoData }) {
         </form>
       </div>
 
-      {showLeaderSearch && (
+      {showLeaderSearch ? (
         <div className="absolute w-full">
           <LeaderSearchBar 
             setShowLeaderSearch={setShowLeaderSearch}
@@ -139,9 +163,9 @@ function Edit({ closeModal, equipoData }) {
             formData={formData}          
           />
         </div>
-      )}
+      ) : null}
 
-      {showPeopleSearch && (
+      {showPeopleSearch ? (
         <div className="absolute w-full">
           <PeopleSearchBar
             setShowPeopleSearch={setShowPeopleSearch}
@@ -149,7 +173,17 @@ function Edit({ closeModal, equipoData }) {
             formData={formData}
           />
         </div>
-      )}
+      ) : null}
+
+      {showProjectSearch ? (
+        <div className="absolute w-full">
+          <ProjectSearchModal
+            setShowProjectSearch={setShowProjectSearch}
+            setFormData={setFormData}
+            formData={formData}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

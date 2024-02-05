@@ -199,6 +199,7 @@ const Equipos = () => {
           <Edit
             equipoData={selectedEquipo}
             closeModal={closeModal}
+            getTeams={getTeams}
           />
         </div>
       )}

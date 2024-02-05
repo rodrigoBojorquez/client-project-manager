@@ -43,6 +43,7 @@ const Proyectos = () => {
     axiosClient
       .get(`/projects?page=${page}`)
       .then((res) => {
+        console.log(res.data.data)
         const formattedProjects = res.data.data.map((project) => ({
           ...project,
           create_date: formatDate(project.create_date),
