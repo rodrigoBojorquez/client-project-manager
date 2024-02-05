@@ -1,6 +1,6 @@
 import React,{ useState } from "react";
 import axios from "../../../../axiosConfig.js";
-
+import { Toaster, toast } from "sonner";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
@@ -72,8 +72,12 @@ function CreateMaterials({ closeModal, getData }) {
           }
         );
         getData()
-        closeModal();
+        toast.success("Se agregó el material")
+        setTimeout(() => {
+          closeModal();
+        }, 1000)
       } catch (error) {
+        toast.error("Error al agregar material")
         console.error("Error en la solicitud", error.message);
       }
     } else {
@@ -134,6 +138,7 @@ function CreateMaterials({ closeModal, getData }) {
           </div>
         </form>
       </div>
+      <Toaster richColors />
     </div>
   );
 }

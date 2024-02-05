@@ -3,6 +3,7 @@ import axios from "../../../../axiosConfig.js";
 
 const expresionNombre = /^[^\d!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 const expresionCantidad = /^\d+$/;
+import { Toaster, toast } from "sonner";
 
 const EditMaterials = ({ closeModalEdit, itemToEdit, getData }) => {
   const [formData, setformData] = useState({
@@ -49,8 +50,12 @@ const EditMaterials = ({ closeModalEdit, itemToEdit, getData }) => {
           }
         );
         getData();
-        closeModalEdit();
+        toast.success("Se editó el material")
+        setTimeout(() => {
+          closeModalEdit();          
+        }, 1000)
       } catch (error) {
+        toast.error("Error al editar")
         console.error("Error en la solicitud", error.message);
       }
     } else {
@@ -111,6 +116,7 @@ const EditMaterials = ({ closeModalEdit, itemToEdit, getData }) => {
           </div>
         </form>
       </div>
+      <Toaster richColors />
     </div>
   );
 };

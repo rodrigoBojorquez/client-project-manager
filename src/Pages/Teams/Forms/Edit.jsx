@@ -9,6 +9,7 @@ import axiosClient from "../../../../axiosConfig";
 import MemberSearch from "../EditModals/MemberSearch";
 import LeaderSearchBar from "../EditModals/LeaderSearchBar"
 import ProjectSearchModal from "../EditModals/ProjectSearchModal";
+import {Toaster, toast} from "sonner"
 
 function Edit({ closeModal, equipoData, getTeams }) {
   // Local state for edits
@@ -50,10 +51,14 @@ function Edit({ closeModal, equipoData, getTeams }) {
       .then((res) => {
         console.log(res);
         getTeams();
-        closeModal();
+        toast.success("Se editó el equipo")
+        setTimeout(() => {
+          closeModal();
+        }, 1000)
       })
       .catch((err) => {
         console.error(err);
+        toast.error("Error al editar")
       });
     // console.log(formatedInfo)
   };
@@ -205,6 +210,8 @@ function Edit({ closeModal, equipoData, getTeams }) {
           />
         </div>
       ) : null}
+
+      <Toaster richColors />
     </div>
   );
 }
