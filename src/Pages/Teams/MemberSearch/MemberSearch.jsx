@@ -4,6 +4,7 @@ import axiosClient from "../../../../axiosConfig";
 
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { IoPersonCircleOutline } from "react-icons/io5";
+import { FaCheck } from "react-icons/fa";
 
 const normalizeString = (str) =>
   str
@@ -51,11 +52,20 @@ const MemberSearch = ({ closeMemberModal, setMember, member }) => {
     ) {
       setError("Selecciona un miembro");
     } else {
-      setMember([...member, selectedMember]);
-      setSelectedMember([]);
-      setError("");
-      console.log(member);
-      closeMemberModal();
+      // Verificar si el miembro ya existe en el array
+      const memberExists = member.some(
+        (m) => m.id_user === selectedMember.id_user
+      );
+
+      if (!memberExists) {
+        setMember([...member, selectedMember]);
+        setSelectedMember([]);
+        setError("");
+        console.log(member);
+        closeMemberModal();
+      } else {
+        setError("Este miembro ya está en el equipo");
+      }
     }
   };
 
@@ -95,11 +105,14 @@ const MemberSearch = ({ closeMemberModal, setMember, member }) => {
               >
                 <li
                   className={
-                    "text-lg font-Outfit font-semibold flex items-center gap-2 py-3 px-10 rounded-lg hover:bg-[#eee]"
+                    "text-xl font-Outfit font-semibold flex items-center justify-center gap-2 py-3 px-10 rounded-lg hover:bg-[#eee]"
                   }
                 >
                   <IoPersonCircleOutline className="text-xl" />
                   <p>{result.username}</p>
+                  {member.some((m) => m.id_user === result.id_user) && (
+                    <FaCheck className="text-[#1DAF90]"/>
+                  )}
                 </li>
               </div>
             ))}

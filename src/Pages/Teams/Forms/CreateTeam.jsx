@@ -96,6 +96,12 @@ function CreateTeam({ closeModal }) {
     return valid;
   };
 
+  const handleDeleteMember = (index) => {
+    const updatedMembers = [...member];
+    updatedMembers.splice(index, 1); // Elimina el miembro en la posición 'index'
+    setMember(updatedMembers);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
