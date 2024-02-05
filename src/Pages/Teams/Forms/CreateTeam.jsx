@@ -1,6 +1,6 @@
 import React,{ useState } from "react";
 
-import PeopleSearchBar from "../PeopleSearchBar/PeopleSearchBar.jsx";
+import MemberSearch from "../EditModals/MemberSearch";
 
 import { AiOutlineUsergroupAdd, AiOutlineUserAdd } from "react-icons/ai";
 import { SlFolder } from "react-icons/sl";
@@ -119,7 +119,7 @@ function CreateTeam({ closeModal }) {
       </div>
       {showLiderModal && (
         <div className="absolute h-screen w-full">
-          <PeopleSearchBar closeLiderModal={closeLiderModal} />
+          <MemberSearch closeLiderModal={closeLiderModal} />
         </div>
       )}
     </div>

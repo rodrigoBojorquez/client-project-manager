@@ -4,7 +4,7 @@ import { HiMagnifyingGlass } from "react-icons/hi2";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import axiosClient from "../../../../axiosConfig";
 
-const PeopleSearchBar = ({
+const MemberSearch = ({
   closeLiderModal,
   setShowPeopleSearch,
   setFormData,
@@ -137,4 +137,4 @@ const PeopleSearchBar = ({
   );
 };
 
-export default PeopleSearchBar;
+export default MemberSearch

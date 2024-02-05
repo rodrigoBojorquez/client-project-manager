@@ -5,7 +5,6 @@ import GlobalContext from "../../store/context.js";
 import Sidebar from "../../Components/NavBar.jsx";
 import Edit from "./Forms/Edit.jsx";
 import CreateTeam from "./Forms/CreateTeam.jsx";
-import PeopleSearchBar from "./PeopleSearchBar/PeopleSearchBar.jsx";
 
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
