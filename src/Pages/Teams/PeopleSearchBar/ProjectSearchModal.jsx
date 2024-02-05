@@ -54,7 +54,10 @@ const ProjectSearchModal = ({ setShowProjectSearch, setFormData, formData }) => 
   };
 
   const handleAddProject = () => {
-    setFormData({...formData, project_info: selectedProject})
+    setFormData({...formData, project_info: {
+      id_project: selectedProject.id,
+      project_name: selectedProject.name,
+    }})
     setShowProjectSearch(false);
     setError("");
   };

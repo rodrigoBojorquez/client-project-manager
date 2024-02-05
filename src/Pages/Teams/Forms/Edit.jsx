@@ -42,12 +42,12 @@ function Edit({ closeModal, equipoData, getTeams }) {
       leaderId: formData.leader_id,
       members: membersArr
     }
-    console.log(id)
+    // console.log(id)
     axiosClient.put(`/team/${id}`, formatedInfo)
       .then(res => {
         console.log(res)
-        // getTeams()
-        // closeModal()
+        getTeams()
+        closeModal()
       })
       .catch(err => {
         console.error(err)
@@ -95,10 +95,15 @@ function Edit({ closeModal, equipoData, getTeams }) {
             </div>
             <div className="mt-5">
               <p className="text-xl text-[#666] font-semibold">Proyecto</p>
-              <button onClick={setShowProjectSearch} className="flex gap-2 items-center text-lg text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] font-semibold border-2 border-[#1DAF90] px-2 py-1 rounded-md">
-                <SlFolder className="text-xl font-semibold" />
-                Asignar proyecto
-              </button>
+              <div className="flex items-center gap-x-5">
+                <div>
+                  <p className="font-bold">{formData.project_info.project_name}</p>
+                </div>
+                <button onClick={setShowProjectSearch} className="flex gap-2 items-center text-lg text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] font-semibold border-2 border-[#1DAF90] px-2 py-1 rounded-md">
+                  <TfiReload className="text-xl font-semibold" />
+                  Cambiar
+                </button>
+              </div>
             </div>
           </div>
           <div className="mb-5">
