@@ -25,7 +25,7 @@ const Proyectos = () => {
   const [teams, setTeams] = useState([]);
   const [showProjectDetails, setProjectDetails] = useState(false);
   const { userData } = useContext(GlobalContext);
-  const rol = userData.role_name
+  const rol = userData.role_name;
 
   const formatDate = (rawDate) => {
     const formatedDate = new Date(rawDate).toLocaleDateString("es-ES", {
@@ -37,7 +37,7 @@ const Proyectos = () => {
     return formatedDate.replace(/\//g, " / ");
   };
 
-  console.log(teams);
+  // console.log(teams);
 
   const getProjects = () => {
     axiosClient
@@ -48,7 +48,7 @@ const Proyectos = () => {
           create_date: formatDate(project.create_date),
         }));
 
-        console.log(formattedProjects);
+        // console.log(formattedProjects);
         setTeams(formattedProjects);
       })
       .catch((err) => {
@@ -98,6 +98,13 @@ const Proyectos = () => {
     setCreateProjectShowModal(false);
   };
 
+  const openDetailsModanl = () => {
+    setProjectDetails(true);
+  };
+  const closeDetailsModanl = (e) => {
+    setProjectDetails(false);
+  };
+
   const handlePreviousPage = () => {
     setPage(page - 1);
   };
@@ -124,7 +131,9 @@ const Proyectos = () => {
           <h1 className="text-[65px] font-bold">Proyectos</h1>
           <button
             onClick={openCreateProjectModanl}
-            className={`flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl ${rol !== "administrator" ? "hidden" : ""}`}
+            className={`flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl ${
+              rol !== "administrator" ? "hidden" : ""
+            }`}
           >
             <BsFillPlusCircleFill className="text-3xl" />
             <p className="text-xl font-bold">Nuevo</p>
@@ -213,6 +222,7 @@ const Proyectos = () => {
                     <td className="text-center">{item.create_date}</td>
                     <td className="text-center">
                       <button
+                        onClick={openDetailsModanl}
                         className={`bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3 ${
                           !(
                             rol === "administrator" ||
@@ -246,7 +256,11 @@ const Proyectos = () => {
         </div>
 
         {/* CHANGE PAGES */}
-        <div className={`flex gap-x-3 mt-5 justify-center ${teams.length == 0 ? "hidden" : ""}`}>
+        <div
+          className={`flex gap-x-3 mt-5 justify-center ${
+            teams.length == 0 ? "hidden" : ""
+          }`}
+        >
           <button
             className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
               page == 1 && "bg-gray-100 text-gray-400"
@@ -272,6 +286,11 @@ const Proyectos = () => {
           <CreateProjectForm
             closeCreateProjectModanl={closeCreateProjectModanl}
           />
+        </div>
+      )}
+      {showProjectDetails && (
+        <div className="absolute flex items-center justify-center h-screen w-full">
+          <ProjectDetails closeDetailsModanl={closeDetailsModanl} />
         </div>
       )}
     </div>

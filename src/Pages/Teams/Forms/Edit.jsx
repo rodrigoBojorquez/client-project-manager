@@ -1,61 +1,55 @@
-import React,{ useState } from "react";
+import React, { useState } from "react";
 
 import { AiOutlineUsergroupAdd, AiOutlineUserAdd } from "react-icons/ai";
 import { TfiReload } from "react-icons/tfi";
 import { PiUserCircleLight } from "react-icons/pi";
 import { GoTrash } from "react-icons/go";
+import PeopleSearchBar from "../PeopleSearchBar/PeopleSearchBar";
+import LeaderSearchBar from "../PeopleSearchBar/LeaderSearchBar";
+import axiosClient from "../../../../axiosConfig";
 
 function Edit({ closeModal, equipoData }) {
-  if (!equipoData) {
-    return null;
-  }
-
-  const { nombreEquipo, lider, miembros } = equipoData;
-
   // Local state for edits
-  const [editedNombreEquipo, setEditedNombreEquipo] = useState(nombreEquipo);
-  const [editedMiembros, setEditedMiembros] = useState([...miembros]);
-
-  // Handle input changes
-  const handleNombreEquipoChange = (e) => {
-    setEditedNombreEquipo(e.target.value);
-  };
+  const [formData, setFormData] = useState({ ...equipoData });
+  const [showPeopleSearch, setShowPeopleSearch] = useState(false);
+  const [showLeaderSearch, setShowLeaderSearch] = useState(false)
 
   // Handle member deletion
-  const handleDeleteMember = (index) => {
-    const updatedMiembros = [...editedMiembros];
-    updatedMiembros.splice(index, 1);
-    setEditedMiembros(updatedMiembros);
+  const handleDeleteMember = (id_user) => {
+    const updatedMembers = formData.team_members_info.filter(
+      (miembro) => miembro.id_user !== id_user
+    );
+    setFormData({
+      ...formData,
+      team_members_info: updatedMembers,
+    });
   };
 
   // Handle member addition
   const handleAddMember = () => {
-    // Implement your logic to add a new member
-    const newMember = { nombre: "Nuevo Miembro", especialidad: "Especialidad" };
-    setEditedMiembros([...editedMiembros, newMember]);
+    setShowPeopleSearch(true);
   };
+
+  const handleEditTeam = () => {
+    // axiosClient.put(``)
+    //   .then(res => {
+
+    //   })
+    //   .catch(err => {
+    //     console.error(err)
+    //   })
+  }
 
   // Handle saving changes
   const handleSaveChanges = () => {
-    // Update the actual team data with local edits
-    const updatedTeamData = {
-      ...equipoData,
-      nombreEquipo: editedNombreEquipo,
-      miembros: editedMiembros,
-    };
-
-    // Implement logic to save changes to the server or wherever necessary
-    console.log("Updated Team Data:", updatedTeamData);
-
-    // Close the modal
     closeModal();
   };
 
   return (
-    <div className="h-screen w-full flex justify-center items-center bg-black bg-opacity-65 backdrop-blur-sm font-Nunito">
+    <div className="h-screen w-full z-10 flex justify-center items-center bg-black bg-opacity-65 backdrop-blur-sm font-Nunito">
       {/* Contenedor */}
       <div className="bg-white h-auto w-auto px-5 rounded-md overflow-hidden transition-all duration-300 ease-in-out">
-        <form action="" className="flex flex-col m-5">
+        <form onSubmit={handleEditTeam} className="flex flex-col m-5">
           <h2 className="text-4xl font-semibold mb-5">Editar Equipo</h2>
           <div className="flex flex-col">
             <label htmlFor="" className="text-xl text-[#666] font-semibold">
@@ -63,8 +57,10 @@ function Edit({ closeModal, equipoData }) {
             </label>
             <input
               type="text"
-              value={editedNombreEquipo}
-              onChange={handleNombreEquipoChange}
+              value={formData.team_name}
+              onChange={(e) =>
+                setFormData({ ...formData, team_name: e.target.value })
+              }
               className="w-[350px] h-8 px-2 outline-none border border-[#a9a9a9] rounded-md "
             />
           </div>
@@ -72,10 +68,10 @@ function Edit({ closeModal, equipoData }) {
             <p className="text-xl text-[#666] font-semibold">Lider *</p>
             <div className="flex gap-6">
               <div className=" font-Outfit">
-                <p className="font-bold">{lider}</p>
+                <p className="font-bold">{formData.leader_username}</p>
                 <p className="text-[#888]">Lider de proyecto</p>
               </div>
-              <button className="flex gap-2 items-center text- text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] font-semibold border-2 border-[#1DAF90] px-2 rounded-md">
+              <button type="button" onClick={() => setShowLeaderSearch(true)} className="flex gap-2 items-center text- text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] font-semibold border-2 border-[#1DAF90] px-2 rounded-md">
                 <TfiReload className="text-xl" />
                 Cambiar
               </button>
@@ -84,22 +80,28 @@ function Edit({ closeModal, equipoData }) {
           <div className="mb-5">
             <p className="text-xl text-[#666] font-semibold">Miembros *</p>
             <div className="mt-2 space-y-2 gap-x-10 grid grid-rows-3 grid-flow-col">
-              {editedMiembros.map((miembro, index) => (
-                <div
-                  key={index}
-                  className=" font-Outfit flex items-center gap-2"
-                >
-                  <PiUserCircleLight className="text-4xl" />
-                  <div>
-                    <p className="font-bold">{miembro.nombre}</p>
-                    <p className="text-[#888]">{miembro.especialidad}</p>
+              {formData.team_members_info &&
+              formData.team_members_info !== null ? (
+                formData.team_members_info.map((miembro) => (
+                  <div
+                    key={miembro.id_user}
+                    className="font-Outfit flex items-center gap-2"
+                  >
+                    <PiUserCircleLight className="text-4xl" />
+                    <div>
+                      <p className="font-bold">{miembro.username}</p>
+                      <p className="text-[#888]">{miembro.speciality}</p>
+                    </div>
+                    <GoTrash
+                      onClick={() => handleDeleteMember(miembro.id_user)}
+                      className="hover:text-red-600"
+                    />
                   </div>
-                  <GoTrash
-                    onClick={() => handleDeleteMember(index)}
-                    className="hover:text-red-600"
-                  />
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-[#888]">No hay miembros por ahora</p>
+              )}
+
               <button
                 type="button"
                 onClick={handleAddMember}
@@ -112,7 +114,8 @@ function Edit({ closeModal, equipoData }) {
           </div>
           <div className="flex items-center justify-center gap-6 mt-5">
             <button
-              onClick={handleSaveChanges}
+              onClick={() => handleEditTeam(formData.id_team)}
+              type="submit"
               className="text-xl text-[#1DAF90] hover:text-white font-semibold border-2 border-[#1DAF90] hover:bg-[#1DAF90] px-3 py-2 rounded-md"
             >
               Guardar
@@ -127,6 +130,26 @@ function Edit({ closeModal, equipoData }) {
           </div>
         </form>
       </div>
+
+      {showLeaderSearch && (
+        <div className="absolute w-full">
+          <LeaderSearchBar 
+            setShowLeaderSearch={setShowLeaderSearch}
+            setFormData={setFormData}
+            formData={formData}          
+          />
+        </div>
+      )}
+
+      {showPeopleSearch && (
+        <div className="absolute w-full">
+          <PeopleSearchBar
+            setShowPeopleSearch={setShowPeopleSearch}
+            setFormData={setFormData}
+            formData={formData}
+          />
+        </div>
+      )}
     </div>
   );
 }
