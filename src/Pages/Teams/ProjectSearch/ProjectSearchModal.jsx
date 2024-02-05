@@ -78,7 +78,7 @@ const ProjectSearchModal = ({ closeProjectModal, setProject, project }) => {
             value={search}
             type="text"
             className="w-[300px] h-9 px-4 bg-[#EEE] rounded-s-md focus:outline-[#ccc]"
-            placeholder="Buscar equipo/lider"
+            placeholder="Buscar proyecto"
           />
           <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
         </div>

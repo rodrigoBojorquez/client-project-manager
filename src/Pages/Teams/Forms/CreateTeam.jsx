@@ -8,6 +8,7 @@ import { FaUser, FaUserTie } from "react-icons/fa";
 import { FaRegFolderOpen } from "react-icons/fa6";
 import { AiOutlineUsergroupAdd, AiOutlineUserAdd } from "react-icons/ai";
 import { SlFolder } from "react-icons/sl";
+import { GoTrash } from "react-icons/go";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
@@ -22,11 +23,8 @@ function CreateTeam({ closeModal }) {
     id_user: "",
     username: "",
   });
-  const [member, setMember] = useState({
-    id: "",
-    name: "",
-  });
-  
+  const [member, setMember] = useState([]);
+
   const [project, setProject] = useState({
     id: "",
     name: "",
@@ -61,8 +59,12 @@ function CreateTeam({ closeModal }) {
     let valid = true;
     const newErrors = {
       teamName: "",
+      leader: "",
+      project: "",
+      members: "",
     };
 
+    // Validación del nombre del equipo
     if (teamName.trim() === "") {
       valid = false;
       newErrors.teamName = "Por favor, ingresa un nombre de equipo.";
@@ -70,6 +72,24 @@ function CreateTeam({ closeModal }) {
       valid = false;
       newErrors.teamName =
         "El nombre no puede iniciar con caracteres especiales.";
+    }
+
+    // Validación del líder
+    if (!leader || !leader.username) {
+      valid = false;
+      newErrors.leader = "Selecciona un líder para el equipo.";
+    }
+
+    // Validación del proyecto
+    if (!project || !project.name) {
+      valid = false;
+      newErrors.project = "Asigna un proyecto al equipo.";
+    }
+
+    // Validación de miembros
+    if (!member || member.length === 0) {
+      valid = false;
+      newErrors.members = "Agrega al menos un miembro al equipo.";
     }
 
     setError(newErrors);
@@ -92,13 +112,10 @@ function CreateTeam({ closeModal }) {
 
   return (
     <div className="h-screen w-full flex justify-center items-center bg-black bg-opacity-65 backdrop-blur-sm font-Nunito">
-      <div className="bg-white h-auto w-[600px] rounded-md grid place-content-center">
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col mt-10 gap-14 w-full"
-        >
+      <div className="bg-white h-auto w-auto rounded-md grid place-content-center">
+        <form onSubmit={handleSubmit} className="flex flex-col w-auto m-5">
           <h2 className="text-4xl font-semibold">Nuevo Equipo</h2>
-          <div className="flex flex-col">
+          <div className="flex flex-col mt-5">
             <label htmlFor="" className="text-xl text-[#666] font-semibold">
               Nombre del equipo *
             </label>
@@ -112,7 +129,7 @@ function CreateTeam({ closeModal }) {
               <p className="text-red-600 text-sm">{error.teamName}</p>
             </div>
           </div>
-          <div className="flex gap-16">
+          <div className="flex gap-16 mt-5">
             <div>
               <p className="text-xl text-[#666] font-semibold">Lider *</p>
               {leader && leader.username ? (
@@ -134,6 +151,9 @@ function CreateTeam({ closeModal }) {
                   Añadir lider
                 </button>
               )}
+              <div>
+                <p className="text-red-600 text-sm">{error.leader}</p>
+              </div>
             </div>
             <div>
               <p className="text-xl text-[#666] font-semibold">Proyecto</p>
@@ -156,20 +176,31 @@ function CreateTeam({ closeModal }) {
                   Asignar proyecto
                 </button>
               )}
+              <div>
+                <p className="text-red-600 text-sm">{error.project}</p>
+              </div>
             </div>
           </div>
-          <div>
+          <div className="mt-5">
             <p className="text-xl text-[#666] font-semibold">Miembros *</p>
-            {member && member.username ? (
-              <button
-                type="button"
-                onClick={openMemberModal}
-                className="flex gap-2 items-center text-lg text-white bg-[#1DAF90] font-semibold border-2 border-[#1DAF90] px-2 py-1 rounded-md"
+            <div className="space-y-2 grid grid-rows-3 grid-flow-col w-auto">
+              {member.map((member, index) => (
+                <div
+                  key={index}
+                  className=" font-Outfit flex items-center gap-2"
                 >
-                <FaUser className="text-2xl" />
-                <p>{member.username}</p>
-              </button>
-            ) : (
+                  <FaUser className="text-2xl text-[#1DAF90]" />
+                  <div>
+                    <p className="font-bold text-[#1DAF90]">
+                      {member.username}
+                    </p>
+                  </div>
+                  <GoTrash
+                    onClick={() => handleDeleteMember(index)}
+                    className="hover:text-red-600"
+                  />
+                </div>
+              ))}
               <button
                 type="button"
                 onClick={openMemberModal}
@@ -178,10 +209,13 @@ function CreateTeam({ closeModal }) {
                 <AiOutlineUsergroupAdd className="text-3xl" />
                 Añadir miembro
               </button>
-            )}
+              <div>
+                <p className="text-red-600 text-sm">{error.members}</p>
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center justify-center m-10 gap-6">
+          <div className="flex items-center justify-center gap-6 mt-4">
             <button className="text-xl text-[#1DAF90] hover:text-white font-semibold border-2 border-[#1DAF90] hover:bg-[#1DAF90] px-3 py-2 rounded-md">
               Crear equipo
             </button>
