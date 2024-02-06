@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { PiFolderNotchOpenFill } from "react-icons/pi";
 
-import axiosClient from "../../../../axiosConfig";
+import axiosClient from "../../../../../axiosConfig";
 
 const normalizeString = (str) =>
   str

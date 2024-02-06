@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios'
 
-import PeopleSearchBar from "../PeopleSearchBar/LeaderSearchBar.jsx";
-import ProjectSearchModal from "../ProjectSearch/ProjectSearchModal.jsx";
-import MemberSearch from "../MemberSearch/MemberSearch.jsx";
+import PeopleSearchBar from "../CreateTeam/PeopleSearchBar/LeaderSearchBar.jsx";
+import ProjectSearchModal from "../CreateTeam/ProjectSearch/ProjectSearchModal.jsx";
+import MemberSearch from "../CreateTeam/MemberSearch/MemberSearch.jsx";
 
 import { FaUser, FaUserTie } from "react-icons/fa";
 import { FaRegFolderOpen } from "react-icons/fa6";
