@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axiosClient from "../../../../axiosConfig.js";
+import { Toaster, toast } from "sonner";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
@@ -111,11 +112,15 @@ function EditEmployees({ closeModal, dataFromMainScreen, getUsers }) {
           },
         );
         getUsers()
-        closeModal();
+        toast.success("Se editó el empleado")
+        setTimeout(() => {
+          closeModal();
+        }, 1000)
       } catch (error) {
         console.error(error);
       }
     } else {
+      toast.error("Error al editar")
       console.log("Errores en el formulario");
     }
   };
@@ -192,6 +197,7 @@ function EditEmployees({ closeModal, dataFromMainScreen, getUsers }) {
           </div>
         </form>
       </div>
+      <Toaster richColors />
     </div>
   );
 }

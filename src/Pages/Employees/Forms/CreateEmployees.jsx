@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axiosClient from "../../../../axiosConfig.js";
+import { Toaster, toast } from "sonner";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
@@ -103,9 +104,13 @@ function CreateEmployees({ closeModal, getUsers }) {
         })
         .then((res) => {
           getUsers();
-          closeModal();
+          toast.success("Se agregó al empleado con exito")
+          setTimeout(() => {
+            closeModal();
+          }, 1000)
         })
         .catch((err) => {
+          toast.error("Error al agregar empleado")
           console.error(err);
         });
     }
@@ -188,6 +193,7 @@ function CreateEmployees({ closeModal, getUsers }) {
           </div>
         </form>
       </div>
+      <Toaster richColors />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import React from "react";
 import ModalMatirials from "../Modals/SearchMatirials.jsx";
 import { RxCross2 } from "react-icons/rx";
 import axiosClient from "../../../../axiosConfig.js";
+import {Toaster, toast} from "sonner"
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
@@ -103,14 +104,16 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
         materials: materialesFormateados
       })
       .then(res => {
-        alert("Proyecto agregado");
-        console.log(res.data.data)
+        toast.success("Se creó el proyecto")
+        setTimeout(() => {
+          closeCreateProjectModanl()
+        }, 1000)
       })
       .catch(err => {
+        toast.error("Error al crear el proyecto")
         console.error(err);
       });
   
-      closeCreateProjectModanl();
     } else {
       console.log("El formulario tiene errores. No se puede enviar.");
     }
@@ -229,6 +232,8 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
           />
         </div>
       )}
+
+      <Toaster richColors />
     </div>
   );
 };
