@@ -25,6 +25,7 @@ const Proyectos = () => {
   const [teams, setTeams] = useState([]);
   const [showProjectDetails, setProjectDetails] = useState(false);
   const { userData } = useContext(GlobalContext);
+  const [modalDeatails, setModalDeatails] = useState({});
   const rol = userData.role_name;
 
   const formatDate = (rawDate) => {
@@ -55,6 +56,11 @@ const Proyectos = () => {
       .catch((err) => {
         console.error(err);
       });
+  };
+
+  const modalDeatail = (project) => {
+    setModalDeatails(project);
+    setProjectDetails(true);
   };
 
   const handleDeleteProject = (id) => {
@@ -233,7 +239,7 @@ const Proyectos = () => {
                     <td className="text-center">{item.create_date}</td>
                     <td className="text-center">
                       <button
-                        onClick={openDetailsModanl}
+                        onClick={() => modalDeatail(item)}
                         className={`bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3 ${
                           !(
                             rol === "administrator" ||
@@ -301,9 +307,7 @@ const Proyectos = () => {
         </div>
       )}
       {showProjectDetails && (
-        <div className="absolute flex items-center justify-center h-screen w-full">
-          <ProjectDetails closeDetailsModanl={closeDetailsModanl} />
-        </div>
+      <ProjectDetails dataFromMainScreen={modalDeatails} closeModal={() => setProjectDetails(false)} getProjects={getProjects} />
       )}
     </div>
   );

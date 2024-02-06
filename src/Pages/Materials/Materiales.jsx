@@ -104,7 +104,7 @@ const Materiales = () => {
   }, []);
 
   useEffect(() => {
-    if (rol !== "admnistrator" || rol !== "warehouse admin") {
+    if (rol !== "administrator" && rol !== "warehouse admin") {
       navigate("/error")
     }
   }, [])

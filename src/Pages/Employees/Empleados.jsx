@@ -97,7 +97,7 @@ const Empleados = () => {
   }, []);
 
   useEffect(() => {
-    if (userRol !== "administrator" || userRol !== "registrators") {
+    if (userRol !== "administrator" && userRol !== "registrators") {
       navigate("/error")
     }
   }, [])
