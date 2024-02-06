@@ -1,5 +1,5 @@
 // EmployeesPage.jsx
-import React,{ useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import GlobalContext from "../../store/context.js";
 
 import Sidebar from "../../Components/NavBar.jsx";
@@ -9,56 +9,17 @@ import CreateTeam from "./Forms/CreateTeam.jsx";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
 import { HiMagnifyingGlass } from "react-icons/hi2";
-
-const equipos = [
-  {
-    nombreEquipo: "Equipo A",
-    lider: "Juan Pérez",
-    numMiembros: 5,
-    miembros: [
-      { nombre: "Marcos", especialidad: "Diseñador principal" },
-      { nombre: "Javier", especialidad: "Analista" },
-      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
-      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
-      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
-      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
-    ],
-  },
-  {
-    nombreEquipo: "Equipo B",
-    lider: "María Rodríguez",
-    numMiembros: 8,
-    miembros: [
-      { nombre: "Marcos", especialidad: "Diseñador principal" },
-      { nombre: "Javier", especialidad: "Analista" },
-      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
-    ],
-  },
-  {
-    nombreEquipo: "Equipo C",
-    lider: "Carlos Sánchez",
-    numMiembros: 6,
-    miembros: [
-      { nombre: "Marcos", especialidad: "Diseñador principal" },
-      { nombre: "Javier", especialidad: "Analista" },
-      { nombre: "Fernando", especialidad: "Desarrollador back-end" },
-    ],
-  },
-];
-
-const normalizeString = (str) =>
-  str
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
+import axiosClient from "../../../axiosConfig.js";
 
 const Equipos = () => {
   const [search, setSearch] = useState("");
+  const [teams, setTeams] = useState([]);
+  const [page, setPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
   const [selectedEquipo, setSelectedEquipo] = useState(null);
-  const { userData } = useContext(GlobalContext)
-  const rol = userData.role_name
+  const { userData } = useContext(GlobalContext);
+  const rol = userData.role_name;
 
   const openModal = (equipo) => {
     setSelectedEquipo(equipo);
@@ -78,29 +39,69 @@ const Equipos = () => {
     setShowCreateTeamModal(false);
   };
 
-  const searchTeam = (e) => {
-    setSearch(normalizeString(e.target.value));
+  const getTeams = () => {
+    axiosClient
+      .get(`/team?page=${page}`)
+      .then((res) => {
+        // console.log(res.data.data);
+        setTeams(res.data.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
-  //Metodo para filtrar por nombre
-  const results = !search
-    ? equipos
-    : equipos.filter(
-        (dato) =>
-          normalizeString(dato.nombreEquipo).includes(search) ||
-          normalizeString(dato.lider).includes(search)
-      );
+  const deleteTeam = (id) => {
+    axiosClient
+      .delete(`/team/${id}`)
+      .then((res) => {
+        console.log(res);
+        getTeams();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+
+  const handleSearch = () => {
+    setPage(1);
+    if (search.trim().length >= 3) {
+      axiosClient.get(`/team?page=${page}&search=${search}`).then((res) => {
+        setTeams(res.data.data);
+      });
+    } else {
+      getProjects();
+    }
+  };
+
+  const handlePreviousPage = () => {
+    setPage(page - 1);
+  };
+
+  const handleNextPage = () => {
+    setPage(page + 1);
+  };
+
+  useEffect(() => {
+    getTeams();
+  }, []);
+
+  useEffect(() => {
+    getTeams();
+  }, [page]);
 
   return (
     <div className="flex">
       <Sidebar />
-      <div className="font-Nunito py-5 px-10">
+      <div className="font-Nunito py-5 px-10 w-full">
         <div className="w-full items-baseline flex gap-5">
           <h1 className="text-[65px] font-bold">Equipos</h1>
           <button
-          type="button"
+            type="button"
             onClick={openCreateTeamModal}
-            className={`flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl ${rol != "administrator" ? "hidden" : ""}`}
+            className={`flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl ${
+              rol != "administrator" ? "hidden" : ""
+            }`}
           >
             <BsFillPlusCircleFill className="text-3xl" />
             <p className="text-xl font-bold">Nuevo</p>
@@ -108,62 +109,102 @@ const Equipos = () => {
         </div>
         <div className="flex items-center mt-10">
           <input
-            onChange={searchTeam}
+            onChange={(e) => setSearch(e.target.value)}
             value={search}
             type="text"
             className="w-[400px] h-9 px-4 bg-[#EEE] rounded-s-md focus:outline-[#ccc]"
             placeholder="Buscar equipo/lider"
           />
-          <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
+          <button onClick={handleSearch}>
+            <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
+          </button>
         </div>
         <div className="mt-5 flex items-center justify-center">
-          {results.length > 0 ? (
-            <table>
+          {teams.length > 0 ? (
+            <table className="w-full">
               <tr className="text-[#555] text-xl font-semibold">
-                <th className="pr-[14rem] pb-4">Nombre</th>
-                <th className="pr-[18rem] pb-4">Lider</th>
-                <th className="pr-[4rem] pb-4">Num. Miembros</th>
-                <td className="pr-[8rem] pb-4">Acciones</td>
+                <th className="text-center">Nombre</th>
+                <th className="text-center">Proyecto</th>
+                <th className="text-center">Lider</th>
+                <th className="text-center">Num. Miembros</th>
+                <td className="text-center">Acciones</td>
               </tr>
               <tbody>
-                {results.map((item, index) => (
+                {teams.map((item, index) => (
                   <tr key={index} className="border-y border-[#999] h-12">
-                    <td>{item.nombreEquipo}</td>
-                    <td>{item.lider}</td>
-                    <td className="pl-14">{item.numMiembros}</td>
-                    <td className="flex h-auto items-center gap-5 mt-2">
-                      <button
-                        onClick={() => openModal(item)}
-                        className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm"
-                      >
-                        Detalles
-                      </button>
-                      {/* Boton de editar */}
-                      <button className="text-[#1DAF90]">
-                        <FiEdit className="text-2xl" />
-                      </button>
+                    <td className="text-center">{item.team_name}</td>
+                    <td className="text-center">
+                      {item.project_info.project_name}
+                    </td>
+                    <td className="text-center">{item.leader_username}</td>
+                    <td className="text-center">
+                      {item.project_info.num_members}
+                    </td>
+                    <td className="">
+                      <div className="flex justify-center gap-x-3">
+                        <button
+                          onClick={() => openModal(item)}
+                          className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          type="button"
+                          className="bg-red-400 text-white px-3 py-1 rounded-md text-sm"
+                          onClick={() => deleteTeam(item.id_team)}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           ) : (
-            <p className="text-4xl font-semibold text-[#A1A1A1] mb-20">
+            <p className="text-4xl font-semibold text-[#A1A1A1] mt-20 text-center">
               No se encontro ningun resultado
             </p>
           )}
         </div>
+        {/* CHANGE PAGES */}
+        <div
+          className={`flex gap-x-3 mt-5 justify-center ${
+            teams.length == 0 ? "hidden" : ""
+          }`}
+        >
+          <button
+            className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
+              page == 1 && "bg-gray-100 text-gray-400"
+            }`}
+            disabled={page == 1}
+            onClick={handlePreviousPage}
+          >
+            Anterior
+          </button>
+          <button
+            className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
+              teams.length < 10 && "bg-gray-100 text-gray-400"
+            }`}
+            disabled={teams.length < 10}
+            onClick={handleNextPage}
+          >
+            Siguiente
+          </button>
+        </div>
       </div>
       {showModal && (
         <div className="absolute w-full">
-          <Edit equipoData={selectedEquipo} closeModal={closeModal} />
+          <Edit
+            equipoData={selectedEquipo}
+            closeModal={closeModal}
+            getTeams={getTeams}
+          />
         </div>
       )}
       {showCreateTeamModal && (
         <div className="absolute w-full">
-          <CreateTeam
-            closeModal={closeCreateTeamModal}
-          />
+          <CreateTeam closeModal={closeCreateTeamModal} />
         </div>
       )}
     </div>

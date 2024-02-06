@@ -37,18 +37,19 @@ const Proyectos = () => {
     return formatedDate.replace(/\//g, " / ");
   };
 
-  console.log(teams);
+  // console.log(teams);
 
   const getProjects = () => {
     axiosClient
       .get(`/projects?page=${page}`)
       .then((res) => {
+        console.log(res.data.data)
         const formattedProjects = res.data.data.map((project) => ({
           ...project,
           create_date: formatDate(project.create_date),
         }));
 
-        console.log(formattedProjects);
+        // console.log(formattedProjects);
         setTeams(formattedProjects);
       })
       .catch((err) => {

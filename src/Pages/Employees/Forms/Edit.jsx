@@ -3,24 +3,23 @@ import axiosClient from "../../../../axiosConfig.js";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
-function EditEmployees({ closeModal, dataFromMainScreen }) {
+function EditEmployees({ closeModal, dataFromMainScreen, getUsers }) {
   
-  const [showEmployees, setShowEmployees] = useState([]);
   
   const rols = [
-    { id: '1', rol: "administrator" },
-    { id: '2', rol: "team leader" },
-    { id: '3', rol: "employee" },
-    { id: '4', rol: "registrators" },
-    { id: '5', rol: "warehouse admin" },
+    { id: '1', rol: "Administrador" },
+    { id: '2', rol: "Lider de equipo" },
+    { id: '3', rol: "Empleado" },
+    { id: '4', rol: "Registrador" },
+    { id: '5', rol: "Jefe de almacén" },
   ];
 
   const [user, setUser] = useState({
-    id_user: "",
-    username: "",
-    email: "",
-    speciality: "",
-    rol_fk: "",
+    id_user: dataFromMainScreen.id_user || "",
+    username: dataFromMainScreen.username || "",
+    email: dataFromMainScreen.email || "",
+    speciality: dataFromMainScreen.speciality  || "" ,
+    rol_fk: dataFromMainScreen.rol_fk || "",
   });
 
   const [error, setError] = useState({
@@ -28,20 +27,8 @@ function EditEmployees({ closeModal, dataFromMainScreen }) {
     username: "",
     email: "",
     speciality: "",
-    rol_fk: "",
+    rol_fk: null,
   });
-
-
-  useEffect(() => {
-    setUser({
-      id_user: dataFromMainScreen.id_user,
-      username: dataFromMainScreen.username,
-      email: dataFromMainScreen.email,
-      speciality: dataFromMainScreen.speciality,
-      rol_fk: String(dataFromMainScreen.rol_fk),
-    });
-    
-  }, [dataFromMainScreen]);
 
   const handleChangeUserName = (e) => {
     const { value } = e.target;
@@ -71,7 +58,7 @@ function EditEmployees({ closeModal, dataFromMainScreen }) {
     const { value } = e.target;
     setUser({
       ...user,
-      rol_fk: value,
+      rol_fk: parseInt(value),
     });
   };
 
@@ -104,12 +91,6 @@ function EditEmployees({ closeModal, dataFromMainScreen }) {
     } else if (!expresion.test(user.speciality.trim())) {
       newErrors.speciality = "La especialidad no pude ser un caracter";
     }
-    if (user.rol_fk.trim() === "") {
-      valid = false;
-      newErrors.rol_fk = "Por favor, ingresa un rol";
-    } else if (!expresion.test(user.rol_fk.trim())) {
-      newErrors.rol_fk = "El rol no pude ser un caracter";
-    }
     setError(newErrors);
     return valid;
   };
@@ -128,15 +109,8 @@ function EditEmployees({ closeModal, dataFromMainScreen }) {
             speciality: user.speciality,
             rol_fk: user.rol_fk,
           },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
         );
-
-        console.log("Formulario enviado", user);
-        console.log("Respuesta del servidor:", response.data);
+        getUsers()
         closeModal();
       } catch (error) {
         console.error(error);
@@ -161,7 +135,7 @@ function EditEmployees({ closeModal, dataFromMainScreen }) {
                 value={user.username}
                 onChange={handleChangeUserName}
                 type="text"
-                className="w-[250px] h-8 px-2 outline-none border border-[#a9a9a9] rounded-md "
+                className="w-[250px] h-8 px-2 outline-none border-[1.5px] border-[#a9a9a9] rounded-md "
               />
               <p className="text-sm text-red-600">{error.username}</p>
             </div>
@@ -171,7 +145,7 @@ function EditEmployees({ closeModal, dataFromMainScreen }) {
                 value={user.email}
                 onChange={handleChangeEmail}
                 type="email"
-                className="w-[250px] h-8 px-2 outline-none border border-[#a9a9a9] rounded-md "
+                className="w-[250px] h-8 px-2 outline-none border-[1.5px] border-[#a9a9a9] rounded-md "
               />
               <p className="text-sm text-red-600">{error.email}</p>
             </div>
@@ -185,15 +159,14 @@ function EditEmployees({ closeModal, dataFromMainScreen }) {
                 value={user.speciality}
                 onChange={handleChangeSpeciality}
                 type="text"
-                className="w-[250px] h-8 px-2 outline-none border border-[#a9a9a9] rounded-md "
+                className="w-[250px] h-8 px-2 outline-none border-[1.5px] border-[#a9a9a9] rounded-md "
               />
               <p className="text-sm text-red-600">{error.speciality}</p>
             </div>
 
-            <div className="flex gap-16">
-              <div>
+            <div className="w-full">
                 <p className="text-xl text-[#666] font-semibold">Rol *</p>
-                <select value={user.rol_fk} onChange={handleChangeRol}>
+                <select value={user.rol_fk} onChange={handleChangeRol} className="w-full text-center border-[1.5px] border-[#a9a9a9] outline-none rounded-md px-2 py-1">
                   {rols.map((rol) => (
                     <option key={rol.id} value={rol.id}>
                       {rol.rol}
@@ -202,14 +175,13 @@ function EditEmployees({ closeModal, dataFromMainScreen }) {
                 </select>
                 <p className="text-sm text-red-600">{error.rol}</p>
               </div>
-            </div>
           </div>
           <div className="flex items-center justify-center gap-5">
             <button
               type="submit"
               className="flex gap-2 items-center text-lg text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] font-semibold border-2 border-[#1DAF90] px-2 py-1 rounded-md"
             >
-              Añadir
+              Editar
             </button>
             <button
               onClick={closeModal}

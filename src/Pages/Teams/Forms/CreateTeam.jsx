@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React,{ useState, useEffect } from "react";
 import axios from 'axios'
-
 import PeopleSearchBar from "../CreateTeam/PeopleSearchBar/LeaderSearchBar.jsx";
 import ProjectSearchModal from "../CreateTeam/ProjectSearch/ProjectSearchModal.jsx";
 import MemberSearch from "../CreateTeam/MemberSearch/MemberSearch.jsx";

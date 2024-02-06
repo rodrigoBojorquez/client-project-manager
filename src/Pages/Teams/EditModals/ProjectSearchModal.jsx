@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { PiFolderNotchOpenFill } from "react-icons/pi";
 
-import axiosClient from "../../../../../axiosConfig.js";
+import axiosClient from "../../../../axiosConfig";
 
 const normalizeString = (str) =>
   str
@@ -11,7 +11,7 @@ const normalizeString = (str) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-const ProjectSearchModal = ({ closeProjectModal, setProject, project }) => {
+const ProjectSearchModal = ({ setShowProjectSearch, setFormData, formData }) => {
   const [search, setSearch] = useState("");
   const [selectedProject, setSelectedProject] = useState([]);
   const [page, setPage] = useState(1);
@@ -25,10 +25,11 @@ const ProjectSearchModal = ({ closeProjectModal, setProject, project }) => {
         const formattedProjects = res.data.data.map((project) => ({
           id: project.id_project,
           name: project.project_name,
+          id_leader: project.id_leader
         }));
+        const filterArr = formattedProjects.filter(project => project.id_leader == null)
 
-        console.log(formattedProjects);
-        setData(formattedProjects);
+        setData(filterArr);
       })
       .catch((err) => {
         console.error(err);
@@ -53,16 +54,12 @@ const ProjectSearchModal = ({ closeProjectModal, setProject, project }) => {
   };
 
   const handleAddProject = () => {
-    if (
-      selectedProject.id === undefined &&
-      selectedProject.name === undefined
-    ) {
-      setError("Selecciona un proyecto");
-    } else {
-      setProject(selectedProject)
-      closeProjectModal();
-      setError("");
-    }
+    setFormData({...formData, project_info: {
+      id_project: selectedProject.id,
+      project_name: selectedProject.name,
+    }})
+    setShowProjectSearch(false);
+    setError("");
   };
 
   useEffect(() => {
@@ -78,7 +75,7 @@ const ProjectSearchModal = ({ closeProjectModal, setProject, project }) => {
             value={search}
             type="text"
             className="w-[300px] h-9 px-4 bg-[#EEE] rounded-s-md focus:outline-[#ccc]"
-            placeholder="Buscar proyecto"
+            placeholder="Buscar equipo/lider"
           />
           <HiMagnifyingGlass className="text-[#A1A1A1] text-md w-14 px-4 bg-[#eee] h-9 rounded-e-md" />
         </div>
@@ -116,7 +113,7 @@ const ProjectSearchModal = ({ closeProjectModal, setProject, project }) => {
             Agregar
           </button>
           <button
-            onClick={closeProjectModal}
+            onClick={() => setShowProjectSearch(false)}
             className="text-lg text-[#a1a1a1] hover:text-red-600 font-semibold border-2 border-[#a1a1a1] hover:border-red-600 px-2 py-1 rounded-md"
           >
             Descartar

@@ -73,7 +73,18 @@ const LoginForm = () => {
             role_name: decodePayload.role_name
           })
 
-          navigate("/dashboard")
+          if (decodePayload.role_name == "administrator") {
+            navigate("/dashboard")
+          } 
+          else if (decodePayload.role_name == "registrator") {
+            navigate("/employees")
+          }
+          else if (decodePayload.role_name == "warehouse admin") {
+            navigate("/materials")
+          }
+          else {
+            navigate("/teams")
+          }
         }
       })
       .catch(err => {

@@ -1,10 +1,10 @@
 import React,{ useState } from "react";
 import axios from "../../../../axiosConfig.js";
-
+import { Toaster, toast } from "sonner";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
-function CreateMaterials({ closeModal }) {
+function CreateMaterials({ closeModal, getData }) {
   const [material, setMaterial] = useState({
     name: "",
     quantity: "",
@@ -25,7 +25,7 @@ function CreateMaterials({ closeModal }) {
     const { value } = e.target;
     setMaterial({
       ...material,
-      quantity: value,
+      quantity: parseInt(value),
     });
   };
 
@@ -43,10 +43,10 @@ function CreateMaterials({ closeModal }) {
       valid = false;
       newErrors.name = "El nombre no puede iniciar con caracteres especiales.";
     }
-    if (material.quantity.trim() === "") {
+    if (material.quantity <= 0) {
       valid = false;
       newErrors.quantity = "Por favor, ingresa una cantidad";
-    } else if (!expresion.test(material.quantity.trim())) {
+    } else if (material.quantity <= 0) {
       newErrors.quantity = "La cantidad no pude ser un caracter";
     }
     setError(newErrors);
@@ -71,11 +71,13 @@ function CreateMaterials({ closeModal }) {
             },
           }
         );
-
-        console.log("Formulario enviado", material);
-        console.log("Respuesta del servidor:", response.data);
-        closeModal();
+        getData()
+        toast.success("Se agregó el material")
+        setTimeout(() => {
+          closeModal();
+        }, 1000)
       } catch (error) {
+        toast.error("Error al agregar material")
         console.error("Error en la solicitud", error.message);
       }
     } else {
@@ -136,6 +138,7 @@ function CreateMaterials({ closeModal }) {
           </div>
         </form>
       </div>
+      <Toaster richColors />
     </div>
   );
 }

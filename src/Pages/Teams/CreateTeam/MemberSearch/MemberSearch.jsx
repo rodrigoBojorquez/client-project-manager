@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import axiosClient from "../../../../../axiosConfig";
+import axiosClient from "../../../../../axiosConfig.js";
 
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { IoPersonCircleOutline } from "react-icons/io5";
