@@ -53,7 +53,7 @@ const PeopleSearchBar = ({ closeLiderModal, setLeader, leader }) => {
     } else {
       setLeader(selectedLeader);
       console.log(leader);
-      closeLiderModal()
+      closeLiderModal();
       setError("");
     }
   };
@@ -90,7 +90,7 @@ const PeopleSearchBar = ({ closeLiderModal, setLeader, leader }) => {
                   selectedLeader && selectedLeader.id_user === result.id_user
                     ? "bg-[#ccc]"
                     : ""
-                }`}
+                } ${result.team_fk !== null ? "hidden" : ""}`}
               >
                 <li
                   className={

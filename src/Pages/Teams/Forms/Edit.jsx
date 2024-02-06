@@ -45,6 +45,7 @@ function Edit({ closeModal, equipoData, getTeams }) {
       leaderId: formData.leader_id,
       members: membersArr,
     };
+    console.log(formatedInfo)
     // console.log(id)
     axiosClient
       .put(`/team/${id}`, formatedInfo)
@@ -52,13 +53,13 @@ function Edit({ closeModal, equipoData, getTeams }) {
         console.log(res);
         getTeams();
         toast.success("Se editó el equipo")
-        setTimeout(() => {
-          closeModal();
-        }, 1000)
+        // setTimeout(() => {
+        //   closeModal();
+        // }, 1000)
       })
       .catch((err) => {
         console.error(err);
-        toast.error("Error al editar")
+        // toast.error("Error al editar")
       });
     // console.log(formatedInfo)
   };

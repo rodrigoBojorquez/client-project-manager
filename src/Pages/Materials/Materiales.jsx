@@ -1,13 +1,14 @@
 // EmployeesPage.jsx
 import axios from "../../../axiosConfig.js";
-import React, { useState, useEffect } from "react";
-
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../../Components/NavBar.jsx";
 import CreateMaterials from "./Forms/CreateMaterials.jsx";
 import EditMaterials from "./Forms/EditMaterials.jsx";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import axiosClient from "../../../axiosConfig.js";
+import GlobalContext from "../../store/context.js";
 
 const Materiales = () => {
   const [showModal, setShowModal] = useState(false);
@@ -15,6 +16,9 @@ const Materiales = () => {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("")
+  const {userData} = useContext(GlobalContext)
+  const rol = userData.role_name
+  const navigate = useNavigate()
 
   const [showModalEdit, setShowModalEdit] = useState(false);
   const [itemToEdit, setItemToEdit] = useState(null);
@@ -100,6 +104,12 @@ const Materiales = () => {
   }, []);
 
   useEffect(() => {
+    if (rol !== "admnistrator" || rol !== "warehouse admin") {
+      navigate("/error")
+    }
+  }, [])
+
+  useEffect(() => {
     getData();
   }, [page]);
 
@@ -169,12 +179,12 @@ const Materiales = () => {
               </tbody>
             </table>
           ) : (
-            <p className="text-4xl font-semibold text-[#A1A1A1] ml-[14rem] mt-[12rem]">
+            <p className="text-4xl font-semibold text-[#A1A1A1] text-center mt-20">
               No se encontro ningun resultado
             </p>
           )}
         </div>
-        <div className="flex gap-x-3 mt-5 justify-center">
+        <div className={`flex gap-x-3 mt-5 justify-center ${!data || data.length == 0 ? "hidden" : ""}`}>
           <button
             className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
               page == 1 && "bg-gray-100 text-gray-400"
@@ -186,9 +196,9 @@ const Materiales = () => {
           </button>
           <button
             className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
-              data.length < 10 && "bg-gray-100 text-gray-400"
+              (!data || data.length < 10) && "bg-gray-100 text-gray-400"
             }`}
-            disabled={data.length < 10}
+            disabled={!data || data.length < 10}
             onClick={handleNextPage}
           >
             Siguiente

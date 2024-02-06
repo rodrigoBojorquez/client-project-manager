@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Sidebar from "../../Components/NavBar.jsx";
 import axiosClient from "../../../axiosConfig.js";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
+import GlobalContext from "../../store/context.js";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const [showData, setShowData] = useState([]);
   const [showProjectPending, setShowProjectPending] = useState([]);
   const [showMaterials, setShowMaterials] = useState([]);
   const [showCounty, setShowCounty] = useState([]);
+  const {userData} = useContext(GlobalContext)
+  const navigate = useNavigate()
+  const rol = userData.role_name
 
   const getDatachart = async () => {
     const response = await axiosClient.get("/dashboard/pie-chart");
@@ -79,6 +84,12 @@ function Dashboard() {
     getCountry();
     getDatachart();
   }, []);
+
+  useEffect(() => {
+    if (rol  !==  "administrator") {
+      navigate("/error")
+    }
+  })
 
   return (
     <div className="flex w-full">

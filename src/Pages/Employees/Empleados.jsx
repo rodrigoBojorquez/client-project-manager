@@ -8,6 +8,7 @@ import { HiMagnifyingGlass } from "react-icons/hi2";
 import axiosClient from "../../../axiosConfig.js";
 import Swal from "sweetalert2";
 import GlobalContext from "../../store/context.js";
+import { useNavigate } from "react-router-dom";
 
 import { FiEdit } from "react-icons/fi";
 
@@ -16,24 +17,23 @@ const Empleados = () => {
   const [showModal, setShowModal] = useState(false);
   const [page, setPage] = useState(1);
   const [users, setUsers] = useState([]);
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState("");
   const [showModalE, setShowModalE] = useState(false);
   const [editUser, setEditUser] = useState([]);
   const userRol = userData.role_name;
+  const navigate = useNavigate()
 
   const openModal = () => {
     setShowModal(true);
   };
-  
 
-   const getEmployes = async() => {
+  const getEmployes = async () => {
     const response = await axiosClient.get(`/employees?page=${page}`);
     setShowEmployees(response.data.data);
     // console.log(response.data);
-   };
+  };
 
-
-   const deleteEmployees = async(id) => {
+  const deleteEmployees = async (id) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -41,32 +41,30 @@ const Empleados = () => {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
+      confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
           Swal.fire({
             title: "Deleted!",
             text: "Your file has been deleted.",
-            icon: "success"
+            icon: "success",
           });
-           await axiosClient.delete(`/user/${id}`);
-           getEmployes();
+          await axiosClient.delete(`/user/${id}`);
+          getEmployes();
         } catch (error) {
           console.error("Error deleting medication:", error);
           Swal.fire({
             title: "Error!",
             text: "An error occurred while deleting medication.",
-            icon: "error"
+            icon: "error",
           });
         }
       }
     });
-    
-   }
-   
-   const openModalE = (employe) => {
-    
+  };
+
+  const openModalE = (employe) => {
     setEditUser(employe);
     setShowModalE(true);
   };
@@ -98,6 +96,12 @@ const Empleados = () => {
     getUsers();
   }, []);
 
+  useEffect(() => {
+    if (userRol !== "administrator" || userRol !== "registrators") {
+      navigate("/error")
+    }
+  }, [])
+
   const getMinIdUser = () => {
     const admins = users.filter((employe) => employe.rol_fk === 1);
     if (admins.length === 0) {
@@ -119,14 +123,15 @@ const Empleados = () => {
   const handleSearch = () => {
     setPage(1);
     if (search.trim().length >= 3) {
-      axiosClient.get(`/employees?page=${page}&search=${search}`)
+      axiosClient
+        .get(`/employees?page=${page}&search=${search}`)
         .then((res) => {
-          console.log(res)
-        setUsers(res.data.data);
+          console.log(res);
+          setUsers(res.data.data);
         })
-        .catch(err => {
-          console.error(err)
-        })
+        .catch((err) => {
+          console.error(err);
+        });
     } else {
       getUsers();
     }
@@ -171,7 +176,7 @@ const Empleados = () => {
             type="text"
             className="w-[400px] h-9 px-4 bg-[#EEE] rounded-s-md focus:outline-[#ccc]"
             placeholder="Buscar equipo/lider"
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             value={search}
           />
           <button onClick={handleSearch}>
@@ -179,61 +184,64 @@ const Empleados = () => {
           </button>
         </div>
         <div className="mt-5 flex flex-col space-y-10 items-center justify-center">
-          <table className="w-full">
-            <tr className="text-[#555] text-xl font-semibold">
-              <th className="text-center pb-2">Nombre</th>
-              <th className="text-center">Correo</th>
-              <th className="text-center">Especialidad</th>
-              <td className="text-center">Acciones</td>
-            </tr>
-            <tbody>
-              {users.map((employe) => {
-                if (
-                  employe.rol_fk === 1 &&
-                  employe.id_user === getMinIdUser()
-                ) {
-                  return null; // No renderizar este empleado
-                }
-                return (
-                  <tr
-                    className="border-y border-[#999] h-12"
-                    key={employe.id_user}
-                  >
-                    <td className="text-center">{employe.username}</td>
-                    <td className="text-center">{employe.email}</td>
-                    <td className="text-center">{employe.speciality}</td>
-                    <td className="">
-                      <div className="flex gap-x-3 justify-center">
-                        <button
-                          onClick={() => openModalE(employe)}
-                          className={`bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm ${
-                            !(
-                              userRol === "administrator" ||
-                              userRol === "employee" ||
-                              userRol === "team leader"
-                            )
-                              ? "hidden"
-                              : ""
-                          }`}
-                        >
-                          Editar
-                        </button>
-                        <button
-                          onClick={() => deleteUser(employe.id_user)}
-                          className={`bg-red-400 text-white px-3 py-1 rounded-md text-sm ${
-                            userRol !== "administrator" ? "hidden" : ""
-                          }`}
-                        >
-                          Eliminar
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          <div className="flex gap-x-3 mt-5 justify-center">
+          {users && users.length > 0 ? (
+            <table className="w-full">
+              <tr className="text-[#555] text-xl font-semibold">
+                <th className="text-center pb-2">Nombre</th>
+                <th className="text-center">Correo</th>
+                <th className="text-center">Especialidad</th>
+                <td className="text-center">Acciones</td>
+              </tr>
+              <tbody>
+                {users.map((employe) => {
+                  if (
+                    employe.rol_fk === 1 &&
+                    employe.id_user === getMinIdUser()
+                  ) {
+                    return null; // No renderizar este empleado
+                  }
+                  return (
+                    <tr
+                      className="border-y border-[#999] h-12"
+                      key={employe.id_user}
+                    >
+                      <td className="text-center">{employe.username}</td>
+                      <td className="text-center">{employe.email}</td>
+                      <td className="text-center">{employe.speciality}</td>
+                      <td className="">
+                        <div className="flex gap-x-3 justify-center">
+                          <button
+                            onClick={() => openModalE(employe)}
+                            className={`bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm ${
+                                userRol !== "administrator" &&
+                                userRol !== "registrators"                        
+                                ? "hidden"
+                                : ""
+                            }`}
+                          >
+                            Editar
+                          </button>
+                          <button
+                            onClick={() => deleteUser(employe.id_user)}
+                            className={`bg-red-400 text-white px-3 py-1 rounded-md text-sm ${
+                              userRol !== "administrator" && userRol !== "registrators" ? "hidden" : ""
+                            }`}
+                          >
+                            Eliminar
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-4xl font-semibold text-[#A1A1A1] text-center mt-20">
+              No se encontro ningun resultado
+            </p>
+          )}
+          <div className={`flex gap-x-3 mt-5 justify-center ${users.length  == 0 ? "hidden" : ""}`}>
             <button
               className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
                 page == 1 && "bg-gray-100 text-gray-400"

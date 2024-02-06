@@ -78,7 +78,7 @@ function CreateMaterials({ closeModal, getData }) {
         }, 1000)
       } catch (error) {
         toast.error("Error al agregar material")
-        console.error("Error en la solicitud", error.message);
+        console.error("Error en la solicitud", error);
       }
     } else {
       console.log("Errores en el formulario");

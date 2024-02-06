@@ -9,10 +9,11 @@ import { FaRegFolderOpen } from "react-icons/fa6";
 import { AiOutlineUsergroupAdd, AiOutlineUserAdd } from "react-icons/ai";
 import { SlFolder } from "react-icons/sl";
 import { GoTrash } from "react-icons/go";
+import {Toaster, toast} from "sonner"
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
-function CreateTeam({ closeModal }) {
+function CreateTeam({ closeModal, getTeams }) {
   const [showLiderModal, setShowLiderModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [showMemberModal, setShowMemberModal] = useState(false);
@@ -116,9 +117,14 @@ function CreateTeam({ closeModal }) {
 
         await axios.post("https://localhost:8000/project-manager/team", requestBody);
 
-        closeModal();
+        getTeams()
+        toast.success("Equipo creado exitosamente")
+        setTimeout(() => {
+          closeModal();
+        }, 1000)
         console.log("Equipo creado exitosamente");
       } catch (error) {
+        toast.error("El proyecto ya tiene un equipo")
         setRequestError("Error al enviar la solicitud");
         console.error(error);
       }
@@ -277,6 +283,7 @@ function CreateTeam({ closeModal }) {
           />
         </div>
       )}
+      <Toaster richColors />
     </div>
   );
 }

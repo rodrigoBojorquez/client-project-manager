@@ -7,7 +7,7 @@ import {Toaster, toast} from "sonner"
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
 
-const CreateProject = ({ closeCreateProjectModanl }) => {
+const CreateProject = ({ closeCreateProjectModanl, getProjects }) => {
   const [modalMatirials, setModalMatirials] = useState(false);
 
   const closeModalMatirials = () => {
@@ -104,7 +104,9 @@ const CreateProject = ({ closeCreateProjectModanl }) => {
         materials: materialesFormateados
       })
       .then(res => {
+
         toast.success("Se creó el proyecto")
+        getProjects()
         setTimeout(() => {
           closeCreateProjectModanl()
         }, 1000)

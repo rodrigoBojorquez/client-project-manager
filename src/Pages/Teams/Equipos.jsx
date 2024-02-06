@@ -67,7 +67,11 @@ const Equipos = () => {
     setPage(1);
     if (search.trim().length >= 3) {
       axiosClient.get(`/team?page=${page}&search=${search}`).then((res) => {
-        setTeams(res.data.data);
+        if (res.data.data != undefined) {
+          setTeams(res.data.data);
+        } else {
+          setTeams(null);
+        }
       });
     } else {
       getProjects();
@@ -120,31 +124,40 @@ const Equipos = () => {
           </button>
         </div>
         <div className="mt-5 flex items-center justify-center">
-          {teams.length > 0 ? (
+          {teams && teams.length > 0 ? (
             <table className="w-full">
-              <tr className="text-[#555] text-xl font-semibold">
-                <th className="text-center">Nombre</th>
-                <th className="text-center">Proyecto</th>
-                <th className="text-center">Lider</th>
-                <th className="text-center">Num. Miembros</th>
-                <td className="text-center">Acciones</td>
-              </tr>
+              <thead>
+                <tr className="text-[#555] text-xl font-semibold">
+                  <th className="text-center">Nombre</th>
+                  <th className="text-center">Proyecto</th>
+                  <th className="text-center">Lider</th>
+                  <th className="text-center">Num. Miembros</th>
+                  <td className={`text-center ${rol !== "administrator" && rol !== "team leader" ? "hidden" : ""}`}>Acciones</td>
+                </tr>
+              </thead>
               <tbody>
                 {teams.map((item, index) => (
                   <tr key={index} className="border-y border-[#999] h-12">
-                    <td className="text-center">{item.team_name}</td>
+                    <td className="text-center">{item.team_name || "N/A"}</td>
                     <td className="text-center">
-                      {item.project_info.project_name}
+                      {item.project_info && item.project_info.project_name
+                        ? item.project_info.project_name
+                        : "N/A"}
                     </td>
-                    <td className="text-center">{item.leader_username}</td>
                     <td className="text-center">
-                      {item.project_info.num_members}
+                      {item.leader_username || "N/A"}
+                    </td>
+                    <td className="text-center">
+                      {item.project_info && item.project_info.num_members
+                        ? item.project_info.num_members
+                        : "N/A"}
                     </td>
                     <td className="">
                       <div className="flex justify-center gap-x-3">
                         <button
                           onClick={() => openModal(item)}
                           className="bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3"
+                          style={rol !== "administrator" && rol !== "team leader" ? {display: "none"} : {}}
                         >
                           Editar
                         </button>
@@ -152,6 +165,7 @@ const Equipos = () => {
                           type="button"
                           className="bg-red-400 text-white px-3 py-1 rounded-md text-sm"
                           onClick={() => deleteTeam(item.id_team)}
+                          style={rol !== "administrator" ? {display: "none"} : {}}
                         >
                           Eliminar
                         </button>
@@ -163,14 +177,14 @@ const Equipos = () => {
             </table>
           ) : (
             <p className="text-4xl font-semibold text-[#A1A1A1] mt-20 text-center">
-              No se encontro ningun resultado
+              No se encontró ningún resultado
             </p>
           )}
         </div>
         {/* CHANGE PAGES */}
         <div
           className={`flex gap-x-3 mt-5 justify-center ${
-            teams.length == 0 ? "hidden" : ""
+            !teams || teams.length == 0 ? "hidden" : ""
           }`}
         >
           <button
@@ -184,9 +198,9 @@ const Equipos = () => {
           </button>
           <button
             className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
-              teams.length < 10 && "bg-gray-100 text-gray-400"
+              !teams || teams.length < 10 ? "bg-gray-100 text-gray-400" : ""
             }`}
-            disabled={teams.length < 10}
+            disabled={!teams || teams.length < 10}
             onClick={handleNextPage}
           >
             Siguiente
@@ -204,7 +218,7 @@ const Equipos = () => {
       )}
       {showCreateTeamModal && (
         <div className="absolute w-full">
-          <CreateTeam closeModal={closeCreateTeamModal} />
+          <CreateTeam closeModal={closeCreateTeamModal} getTeams={getTeams} />
         </div>
       )}
     </div>

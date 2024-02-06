@@ -57,6 +57,16 @@ const Proyectos = () => {
       });
   };
 
+  const handleDeleteProject = (id) => {
+    axiosClient.delete(`projects/${id}`)
+      .then(res => {
+        getProjects()
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
+
   const handleSearch = () => {
     setPage(1);
     if (search.trim().length >= 3) {
@@ -286,6 +296,7 @@ const Proyectos = () => {
         <div className="h-screen absolute w-full">
           <CreateProjectForm
             closeCreateProjectModanl={closeCreateProjectModanl}
+            getProjects={getProjects}
           />
         </div>
       )}

@@ -101,7 +101,7 @@ const MemberSearch = ({ closeMemberModal, setMember, member }) => {
                   selectedMember && selectedMember.id_user === result.id_user
                     ? "bg-[#ccc]"
                     : ""
-                }`}
+                } ${result.team_fk !== null ? "hidden" : ""}`}
               >
                 <li
                   className={
@@ -111,7 +111,7 @@ const MemberSearch = ({ closeMemberModal, setMember, member }) => {
                   <IoPersonCircleOutline className="text-xl" />
                   <p>{result.username}</p>
                   {member.some((m) => m.id_user === result.id_user) && (
-                    <FaCheck className="text-[#1DAF90]"/>
+                    <FaCheck className="text-[#1DAF90]" />
                   )}
                 </li>
               </div>

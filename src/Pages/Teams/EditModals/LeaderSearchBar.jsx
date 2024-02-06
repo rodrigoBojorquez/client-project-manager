@@ -18,6 +18,17 @@ function LeaderSearchBar({ setShowLeaderSearch, setFormData, formData }) {
       });
   };
 
+  const handleUserClick = (userId, username, speciality) => {
+    // Actualizar el estado formData con la información del usuario seleccionado
+    setFormData({
+      ...formData,
+      leader_id: userId,
+      leader_username: username,
+    });
+    // Ocultar la barra de búsqueda de líderes
+    setShowLeaderSearch(false);
+  };
+
   const handleSearch = () => {
     if (search.trim().length >= 3) {
       axiosClient.get(`/employees?page=1&search=${search}`).then((res) => {
@@ -63,7 +74,6 @@ function LeaderSearchBar({ setShowLeaderSearch, setFormData, formData }) {
                       handleUserClick(
                         item.id_user,
                         item.username,
-                        item.speciality
                       )
                     }
                   >

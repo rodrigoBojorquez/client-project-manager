@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
-import img from "../../img/bgLogin.jpg";
+import React, { useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import img from "../../img/bgLogin.jpg";
 import {
   faEnvelope,
   faLock,
@@ -11,15 +11,16 @@ import { IoIosEye, IoIosEyeOff } from "react-icons/io";
 import axiosClient from "../../../axiosConfig";
 import { useNavigate } from "react-router-dom";
 import GlobalContext from "../../store/context";
+import { Toaster, toast } from "sonner";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useContext(GlobalContext)
-
-  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false); // Nuevo estado para manejar la carga
+  const { login } = useContext(GlobalContext);
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -28,9 +29,9 @@ const LoginForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (email.trim().length == 0) {
-      setError("El correo no puede esta vacío")
-      return
+    if (email.trim().length === 0) {
+      setError("El correo no puede estar vacío");
+      return;
     }
 
     if (password.trim() === "") {
@@ -40,57 +41,61 @@ const LoginForm = () => {
 
     setError("");
 
-    axiosClient.post(`/login`, {
-      email: email,
-      password: password
-    },
-    {
-      withCredentials: true
-    })
-      .then(res => {
-        console.log(res.headers)
-        const cookieHeader = res.headers["set-cookie"]
-        console.log(cookieHeader)
+    setLoading(true); // Actualizar el estado de carga al iniciar la solicitud
+
+    axiosClient
+      .post(
+        `/login`,
+        {
+          email: email,
+          password: password,
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        const cookieHeader = res.headers["set-cookie"];
 
         if (cookieHeader) {
-          document.cookie = cookieHeader.split(";")[0]
+          document.cookie = cookieHeader.split(";")[0];
         }
 
-        const allCookies = document.cookie
-        console.log("hol",allCookies)
-        const localCookie = allCookies.split(";").find(cookie => cookie.trim().startsWith("token="))
-  
+        const allCookies = document.cookie;
+        const localCookie = allCookies
+          .split(";")
+          .find((cookie) => cookie.trim().startsWith("token="));
+
         if (localCookie) {
-          const cookieValue = localCookie.split('=')[1];
-          const [ headerBase64, payloadBase64, signature ] = cookieValue.split(".")
-  
-          const decodePayload = JSON.parse(atob(payloadBase64))
-          console.log(decodePayload)
+          const cookieValue = localCookie.split("=")[1];
+          const [headerBase64, payloadBase64] = cookieValue.split(".");
+
+          const decodePayload = JSON.parse(atob(payloadBase64));
 
           login({
             username: decodePayload.username,
             isAuth: true,
-            role_name: decodePayload.role_name
-          })
+            role_name: decodePayload.role_name,
+          });
 
-          if (decodePayload.role_name == "administrator") {
-            navigate("/dashboard")
-          } 
-          else if (decodePayload.role_name == "registrator") {
-            navigate("/employees")
-          }
-          else if (decodePayload.role_name == "warehouse admin") {
-            navigate("/materials")
-          }
-          else {
-            navigate("/teams")
+          if (decodePayload.role_name === "administrator") {
+            navigate("/dashboard");
+          } else if (decodePayload.role_name === "registrators") {
+            navigate("/employees");
+          } else if (decodePayload.role_name === "warehouse admin") {
+            navigate("/materials");
+          } else {
+            navigate("/teams");
           }
         }
       })
-      .catch(err => {
-        console.error(err)
-        return
+      .catch((err) => {
+        toast.error("Credenciales incorrectas");
+        console.error(err);
       })
+      .finally(() => {
+        setLoading(false); // Actualizar el estado de carga al finalizar la solicitud
+      });
   };
 
   return (
@@ -172,6 +177,7 @@ const LoginForm = () => {
           </div>
         </form>
       </div>
+      <Toaster richColors position="top-center" />
     </div>
   );
 };
