@@ -8,6 +8,7 @@ import Sidebar from "../../Components/NavBar.jsx";
 import CreateProjectForm from "./Modals/CreateProject.jsx";
 import ProjectDetails from "./Modals/ProjectDetails.jsx";
 
+import Swal from "sweetalert2";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
 import { HiMagnifyingGlass } from "react-icons/hi2";
@@ -24,8 +25,9 @@ const Proyectos = () => {
   const [page, setPage] = useState(1);
   const [teams, setTeams] = useState([]);
   const [showProjectDetails, setProjectDetails] = useState(false);
+  const [modalDeatails, setModalDeatails] = useState(false);
   const { userData } = useContext(GlobalContext);
-  const rol = userData.role_name;
+  const rol = userData.role_name
 
   const formatDate = (rawDate) => {
     const formatedDate = new Date(rawDate).toLocaleDateString("es-ES", {
@@ -43,7 +45,6 @@ const Proyectos = () => {
     axiosClient
       .get(`/projects?page=${page}`)
       .then((res) => {
-        console.log(res.data.data)
         const formattedProjects = res.data.data.map((project) => ({
           ...project,
           create_date: formatDate(project.create_date),
@@ -73,6 +74,39 @@ const Proyectos = () => {
     }
   };
 
+  // Delete project
+  const handleDeleteProject = async (id) => {
+    Swal.fire({
+      title: "¿Está seguro?",
+      text: "¡No podrás revertir esto!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axiosClient.delete(`/projects/${id}`);
+          Swal.fire({
+            title: "Deleted!",
+            text: "Proyecto eliminado exitosamente!",
+            icon: "success"
+          });
+          getProjects();
+        } catch (error) {
+          console.error("Error al eliminar el proyecto:", error);
+                Swal.fire({
+                  title: "Error!",
+                  text: "Sucedio un error al intentar eliminar el proyecto",
+                  icon: "error"
+                });
+        }
+      }
+    });
+    
+  }
+
   const handleFilter = (state_fk) => {
     setPage(1);
     setSearch("");
@@ -99,11 +133,9 @@ const Proyectos = () => {
     setCreateProjectShowModal(false);
   };
 
-  const openDetailsModanl = () => {
-    setProjectDetails(true);
-  };
-  const closeDetailsModanl = (e) => {
-    setProjectDetails(false);
+  const modalDeatail = (project) => {
+    setProjectDetails(project);
+    setModalDeatails(true);
   };
 
   const handlePreviousPage = () => {
@@ -132,9 +164,7 @@ const Proyectos = () => {
           <h1 className="text-[65px] font-bold">Proyectos</h1>
           <button
             onClick={openCreateProjectModanl}
-            className={`flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl ${
-              rol !== "administrator" ? "hidden" : ""
-            }`}
+            className={`flex items-center justify-center gap-2 text-[#1DAF90] hover:text-white hover:bg-[#1DAF90] h-12 w-[8rem] rounded-xl ${rol !== "administrator" ? "hidden" : ""}`}
           >
             <BsFillPlusCircleFill className="text-3xl" />
             <p className="text-xl font-bold">Nuevo</p>
@@ -223,7 +253,7 @@ const Proyectos = () => {
                     <td className="text-center">{item.create_date}</td>
                     <td className="text-center">
                       <button
-                        onClick={openDetailsModanl}
+                        onClick={() => modalDeatail(item)}
                         className={`bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3 ${
                           !(
                             rol === "administrator" ||
@@ -257,11 +287,7 @@ const Proyectos = () => {
         </div>
 
         {/* CHANGE PAGES */}
-        <div
-          className={`flex gap-x-3 mt-5 justify-center ${
-            teams.length == 0 ? "hidden" : ""
-          }`}
-        >
+        <div className={`flex gap-x-3 mt-5 justify-center ${teams.length == 0 ? "hidden" : ""}`}>
           <button
             className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
               page == 1 && "bg-gray-100 text-gray-400"
@@ -289,11 +315,9 @@ const Proyectos = () => {
           />
         </div>
       )}
-      {showProjectDetails && (
-        <div className="absolute flex items-center justify-center h-screen w-full">
-          <ProjectDetails closeDetailsModanl={closeDetailsModanl} />
-        </div>
-      )}
+      {modalDeatails && (
+            <ProjectDetails dataFromMainScreen={showProjectDetails} closeModal={() => setModalDeatails(false)} />
+            )}
     </div>
   );
 };
