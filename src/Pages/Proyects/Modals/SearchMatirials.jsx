@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import axiosClient from "../../../../axiosConfig";
+import { Toaster, toast } from "sonner";
 import React from "react";
 
 const SearchMaterials = ({ closeModalMatirials, setProyecto, proyecto }) => {
@@ -49,11 +50,13 @@ const SearchMaterials = ({ closeModalMatirials, setProyecto, proyecto }) => {
           quantity: assignedQuantity
         }
         setProyecto(prevProject => ({...prevProject, materiales: [...prevProject.materiales, newMaterial]}))
+        setSelectedMaterial(null);
+        setAssignedQuantity(0);
+        closeModalMatirials();
       }
-      // console.log(proyecto)
-      setSelectedMaterial(null);
-      setAssignedQuantity(0);
-      closeModalMatirials();
+      else {
+        toast.warning("Esa cantidad no está disponible")
+      }
     }
   };
 
@@ -133,6 +136,7 @@ const SearchMaterials = ({ closeModalMatirials, setProyecto, proyecto }) => {
           </button>
         </div>
       </div>
+      <Toaster richColors />
     </div>
   );
 };
