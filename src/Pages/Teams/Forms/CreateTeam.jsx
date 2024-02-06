@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from 'axios'
 
 import PeopleSearchBar from "../PeopleSearchBar/LeaderSearchBar.jsx";
 import ProjectSearchModal from "../ProjectSearch/ProjectSearchModal.jsx";
@@ -18,6 +19,7 @@ function CreateTeam({ closeModal }) {
   const [showMemberModal, setShowMemberModal] = useState(false);
   const [teamName, setTeamName] = useState("");
   const [error, setError] = useState({ teamName: "" });
+  const [requestError, setRequestError] = useState(null);
 
   const [leader, setLeader] = useState({
     id_user: "",
@@ -102,11 +104,25 @@ function CreateTeam({ closeModal }) {
     setMember(updatedMembers);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      closeModal();
-      console.log("Formulario enviado:", teamName);
+      try {
+        const requestBody = {
+          teamName,
+          projectId: project.id,
+          leaderId: leader.id_user,
+          members: member.map((m) => m.id_user),
+        };
+
+        await axios.post("https://localhost:8000/project-manager/team", requestBody);
+
+        closeModal();
+        console.log("Equipo creado exitosamente");
+      } catch (error) {
+        setRequestError("Error al enviar la solicitud");
+        console.error(error);
+      }
     } else {
       console.log("No se puede enviar el formulario");
     }
