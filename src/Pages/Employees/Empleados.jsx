@@ -51,7 +51,6 @@ const Empleados = () => {
             icon: "success",
           });
           await axiosClient.delete(`/user/${id}`);
-          getEmployes();
         } catch (error) {
           console.error("Error deleting medication:", error);
           Swal.fire({
@@ -60,6 +59,8 @@ const Empleados = () => {
             icon: "error",
           });
         }
+        getUsers();
+        getEmployes();
       }
     });
   };
@@ -80,20 +81,10 @@ const Empleados = () => {
       });
   };
 
-  const deleteUser = (id) => {
-    axiosClient
-      .delete(`/user/${id}`)
-      .then((res) => {
-        getUsers();
-        alert("Usuario elminado");
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  };
 
   useEffect(() => {
     getUsers();
+    getEmployes();
   }, []);
 
   useEffect(() => {
@@ -222,7 +213,7 @@ const Empleados = () => {
                             Editar
                           </button>
                           <button
-                            onClick={() => deleteUser(employe.id_user)}
+                            onClick={() => deleteEmployees(employe.id_user)}
                             className={`bg-red-400 text-white px-3 py-1 rounded-md text-sm ${
                               userRol !== "administrator" && userRol !== "registrators" ? "hidden" : ""
                             }`}
@@ -241,7 +232,7 @@ const Empleados = () => {
               No se encontro ningun resultado
             </p>
           )}
-          <div className={`flex gap-x-3 mt-5 justify-center ${users.length  == 0 ? "hidden" : ""}`}>
+          <div className={`flex gap-x-3 mt-5 justify-center`}>
             <button
               className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
                 page == 1 && "bg-gray-100 text-gray-400"

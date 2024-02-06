@@ -20,7 +20,7 @@ function PrivateRoute({ children }) {
         const response = await axiosClient.post("/token", {
           token: token,
         });
-
+        console.log(response)
         const data = response.data;
 
         if (data.isValid === true) {
@@ -55,7 +55,7 @@ function PrivateRoute({ children }) {
 
   if (!isValidToken) {
     // En PrivateRoute, cuando rediriges a la página de error
-    return <Navigate to="/error" state={{ fromUnauthorized: true }} />;
+    // return <Navigate to="/error" state={{ fromUnauthorized: true }} />;
   }
 
   return <Outlet />;

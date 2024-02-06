@@ -7,7 +7,7 @@ import GlobalContext from "../../store/context.js";
 import Sidebar from "../../Components/NavBar.jsx";
 import CreateProjectForm from "./Modals/CreateProject.jsx";
 import ProjectDetails from "./Modals/ProjectDetails.jsx";
-
+import { useNavigate } from "react-router-dom";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
 import { HiMagnifyingGlass } from "react-icons/hi2";
@@ -26,6 +26,7 @@ const Proyectos = () => {
   const [showProjectDetails, setProjectDetails] = useState(false);
   const { userData } = useContext(GlobalContext);
   const [modalDeatails, setModalDeatails] = useState({});
+  const navigate = useNavigate()
   const rol = userData.role_name;
 
   const formatDate = (rawDate) => {
@@ -106,6 +107,12 @@ const Proyectos = () => {
         console.error(err);
       });
   };
+
+  useEffect(() => {
+    if (rol !== "administrator" && rol !== "team leader") {
+      navigate("/error")
+    }
+  }, [])
 
   const openCreateProjectModanl = () => {
     setCreateProjectShowModal(true);
@@ -209,7 +216,7 @@ const Proyectos = () => {
                 <th className="pb-4 text-center">Estado</th>
                 <th className=" pb-4 text-center">Responsable</th>
                 <th className=" pb-4 text-center">Fecha de inicio</th>
-                <td className=" pb-4 text-center">Acciones</td>
+                <td className={`pb-4 text-center ${rol !== "administrator" && rol !== "team leader" ? "hidden":""}`}>Acciones</td>
               </tr>
               <tbody>
                 {teams.map((item) => (
@@ -241,11 +248,8 @@ const Proyectos = () => {
                       <button
                         onClick={() => modalDeatail(item)}
                         className={`bg-[#1DAF90] text-white px-3 py-1 rounded-md text-sm mr-3 ${
-                          !(
-                            rol === "administrator" ||
-                            rol === "employee" ||
-                            rol === "team leader"
-                          )
+                            rol !== "administrator"
+                            // rol !== "team leader"
                             ? "hidden"
                             : ""
                         }`}

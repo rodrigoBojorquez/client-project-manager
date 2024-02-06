@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import axiosClient from "../../../../axiosConfig.js";
 import { Toaster, toast } from "sonner";
 
-const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
+const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''^^´´`¨¨=|°\\/-]/;
+const emailExpresion = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
 function CreateEmployees({ closeModal, getUsers }) {
   const rols = [
@@ -67,13 +68,17 @@ function CreateEmployees({ closeModal, getUsers }) {
       newErrors.username = "Por favor, ingresa el nombre del usuario";
     } else if (!expresion.test(user.username.trim())) {
       valid = false;
-      newErrors.username = "El nombre no puede iniciar con caracteres especiales.";
+      newErrors.username =
+        "El nombre no puede iniciar con caracteres especiales.";
     }
     if (user.email.trim() === "") {
       valid = false;
       newErrors.email = "Por favor, ingresa un email";
     } else if (!expresion.test(user.email.trim())) {
       newErrors.email = "El email no pude ser un caracter";
+    } else if (!emailExpresion.test(user.email.trim())) {
+      valid = false;
+      newErrors.email = "Por favor, ingresa un correo electrónico válido";
     }
     if (user.speciality.trim() === "") {
       valid = false;
@@ -81,13 +86,19 @@ function CreateEmployees({ closeModal, getUsers }) {
     } else if (!expresion.test(user.speciality.trim())) {
       newErrors.speciality = "La especialidad no pude ser un caracter";
     }
-    if (user.rol_fk.trim() === "") {
+    if (
+      user.rol_fk === null ||
+      user.rol_fk === undefined ||
+      user.rol_fk === ""
+    ) {
       valid = false;
       newErrors.rol_fk = "Por favor, ingresa un rol";
-    } else if (!expresion.test(user.rol_fk.trim())) {
-      newErrors.rol_fk = "El rol no pude ser un caracter";
+    } else if (!expresion.test(String(user.rol_fk))) {
+      newErrors.rol_fk = "El rol no puede ser un caracter";
     }
+
     setError(newErrors);
+    console.log(error);
     return valid;
   };
 
@@ -104,13 +115,13 @@ function CreateEmployees({ closeModal, getUsers }) {
         })
         .then((res) => {
           getUsers();
-          toast.success("Se agregó al empleado con exito")
+          toast.success("Se agregó al empleado con exito");
           setTimeout(() => {
             closeModal();
-          }, 1000)
+          }, 1000);
         })
         .catch((err) => {
-          toast.error("Error al agregar empleado")
+          toast.error("Error al agregar empleado");
           console.error(err);
         });
     }
@@ -141,7 +152,7 @@ function CreateEmployees({ closeModal, getUsers }) {
               <input
                 value={user.email}
                 onChange={handleChangeEmail}
-                type="email"
+                type="text"
                 className="w-[250px] h-8 px-2 outline-none border-[1.5px] border-[#a9a9a9] rounded-md "
               />
               <p className="text-sm text-red-600">{error.email}</p>

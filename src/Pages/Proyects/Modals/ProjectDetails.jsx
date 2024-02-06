@@ -135,7 +135,7 @@ const ProjectDetails = ({ closeModal, dataFromMainScreen, getProjects }) => {
                               />
                             </td>
                             <td>
-                              <input
+                              {/* <input
                                 value={material.quantity}
                                 onChange={(e) =>
                                   handleMaterialChange(
@@ -144,7 +144,8 @@ const ProjectDetails = ({ closeModal, dataFromMainScreen, getProjects }) => {
                                     e.target.value
                                   )
                                 }
-                              />
+                              /> */}
+                              <p>{material.quantity}</p>
                             </td>
                           </tr>
                         ))

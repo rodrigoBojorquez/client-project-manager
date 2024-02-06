@@ -5,7 +5,7 @@ import { RxCross2 } from "react-icons/rx";
 import axiosClient from "../../../../axiosConfig.js";
 import {Toaster, toast} from "sonner"
 
-const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
+const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''^^´´`¨¨=|°\\/-]/;
 
 const CreateProject = ({ closeCreateProjectModanl, getProjects }) => {
   const [modalMatirials, setModalMatirials] = useState(false);

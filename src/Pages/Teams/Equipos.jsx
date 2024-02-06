@@ -5,7 +5,7 @@ import GlobalContext from "../../store/context.js";
 import Sidebar from "../../Components/NavBar.jsx";
 import Edit from "./Forms/Edit.jsx";
 import CreateTeam from "./Forms/CreateTeam.jsx";
-
+import { useNavigate } from "react-router-dom";
 import { BsFillPlusCircleFill } from "react-icons/bs";
 import { FiEdit } from "react-icons/fi";
 import { HiMagnifyingGlass } from "react-icons/hi2";
@@ -18,6 +18,7 @@ const Equipos = () => {
   const [showModal, setShowModal] = useState(false);
   const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
   const [selectedEquipo, setSelectedEquipo] = useState(null);
+  const navigate = useNavigate()
   const { userData } = useContext(GlobalContext);
   const rol = userData.role_name;
 
@@ -89,6 +90,12 @@ const Equipos = () => {
   useEffect(() => {
     getTeams();
   }, []);
+
+  useEffect(() => {
+    if (rol !== "administrator" && rol !== "team leader") {
+      navigate("/error")
+    }
+  }, [])
 
   useEffect(() => {
     getTeams();

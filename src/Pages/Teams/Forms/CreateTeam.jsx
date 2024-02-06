@@ -1,5 +1,5 @@
-import React,{ useState, useEffect } from "react";
-import axios from 'axios'
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import PeopleSearchBar from "../CreateTeam/PeopleSearchBar/CreateLeaderSearchBar.jsx";
 import ProjectSearchModal from "../CreateTeam/ProjectSearch/CreateProjectSearchModal.jsx";
 import MemberSearch from "../CreateTeam/MemberSearch/CreateMemberSearch.jsx";
@@ -9,9 +9,9 @@ import { FaRegFolderOpen } from "react-icons/fa6";
 import { AiOutlineUsergroupAdd, AiOutlineUserAdd } from "react-icons/ai";
 import { SlFolder } from "react-icons/sl";
 import { GoTrash } from "react-icons/go";
-import {Toaster, toast} from "sonner"
+import { Toaster, toast } from "sonner";
 
-const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
+const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''^^´´`¨¨=|°\\/-]/;
 
 function CreateTeam({ closeModal, getTeams }) {
   const [showLiderModal, setShowLiderModal] = useState(false);
@@ -115,16 +115,19 @@ function CreateTeam({ closeModal, getTeams }) {
           members: member.map((m) => m.id_user),
         };
 
-        await axios.post("https://localhost:8000/project-manager/team", requestBody);
+        await axios.post(
+          "https://localhost:8000/project-manager/team",
+          requestBody
+        );
 
-        getTeams()
-        toast.success("Equipo creado exitosamente")
+        getTeams();
+        toast.success("Equipo creado exitosamente");
         setTimeout(() => {
           closeModal();
-        }, 1000)
+        }, 1000);
         console.log("Equipo creado exitosamente");
       } catch (error) {
-        toast.error("El proyecto ya tiene un equipo")
+        toast.error("El proyecto ya tiene un equipo");
         setRequestError("Error al enviar la solicitud");
         console.error(error);
       }

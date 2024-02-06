@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import axiosClient from "../../../../axiosConfig.js";
 import { Toaster, toast } from "sonner";
 
-const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
+const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''^^´´`¨¨=|°\\/-]/;
+const emailExpresion = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
 
 function EditEmployees({ closeModal, dataFromMainScreen, getUsers }) {
   
@@ -85,6 +86,9 @@ function EditEmployees({ closeModal, dataFromMainScreen, getUsers }) {
       newErrors.email = "Por favor, ingresa un email";
     } else if (!expresion.test(user.email.trim())) {
       newErrors.email = "El email no pude ser un caracter";
+    } else if (!emailExpresion.test(user.email.trim())) {
+      valid = false;
+      newErrors.email = "Por favor, ingresa un correo electrónico válido";
     }
     if (user.speciality.trim() === "") {
       valid = false;
