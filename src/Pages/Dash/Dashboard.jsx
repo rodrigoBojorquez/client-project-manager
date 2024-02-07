@@ -40,19 +40,19 @@ function Dashboard() {
 
   var data = {
     labels: [
-      `Cancelado ${showData.canceled}`,
-      `Finalizado ${showData.finished}`,
-      `En curso ${showData.in_course}`,
-      `en pausa ${showData.in_pause}`,
+      `Cancelado ${showData?.canceled}`,
+      `Finalizado ${showData?.finished}`,
+      `En curso ${showData?.in_course}`,
+      `en pausa ${showData?.in_pause}`,
     ],
     datasets: [
       {
         label: "",
         data: [
-          showData.canceled,
-          showData.finished,
-          showData.in_course,
-          showData.in_pause,
+          showData?.canceled,
+          showData?.finished,
+          showData?.in_course,
+          showData?.in_pause,
         ],
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
@@ -106,7 +106,7 @@ function Dashboard() {
                     <th className="pb-2">Fecha de adicion</th>
                   </tr>
                 </thead>
-                  {showMaterials.length > 0 ? (
+                  {showMaterials?.length > 0 ? (
                     <tbody>
                       {showMaterials.map((material) => (
                         <tr key={material.id_material} className="border-y border-[#999]">
@@ -142,7 +142,7 @@ function Dashboard() {
                     <th className="pb-2">Fecha de edicion</th>
                   </tr>
                 </thead>
-                {showProjectPending.length > 0 ? (
+                {showProjectPending?.length > 0 ? (
                   <tbody>
                     {showProjectPending.slice(1, 3).map((item) => (
                       <tr key={item.id_project} className="border-y border-[#999]">
@@ -174,7 +174,7 @@ function Dashboard() {
                     <th className="pb-2">Cantidad</th>
                   </tr>
                 </thead>
-                {showCounty.length > 0 ? (
+                {showCounty?.length > 0 ? (
                   <tbody>
                     {showCounty.map((item) => (
                       <tr key={item.id} className="border-y border-[#999]">

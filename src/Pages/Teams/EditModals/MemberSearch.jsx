@@ -63,7 +63,7 @@ const MemberSearch = ({
 
   useEffect(() => {
     getUsers();
-  }, [formData.team_members_info]);
+  }, [formData?.team_members_info]);
 
   return (
     <div className="bg-black z-20 h-screen w-full inset-0 flex flex-col items-center justify-center bg-opacity-65">
@@ -86,8 +86,8 @@ const MemberSearch = ({
               <div
                 key={item.id_user}
                 className={`w-[300px] my-2 border-2 border-[#666] rounded-lg ${
-                  formData.team_members_info !== null
-                    ? formData.team_members_info.some(
+                  formData?.team_members_info !== null
+                    ? formData?.team_members_info.some(
                         (selected) => selected.id_user === item.id_user
                       )
                       ? "hidden"

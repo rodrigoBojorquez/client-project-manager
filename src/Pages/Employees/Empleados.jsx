@@ -16,7 +16,7 @@ const Empleados = () => {
   const [showModal, setShowModal] = useState(false);
   const [page, setPage] = useState(1);
   const [users, setUsers] = useState([]);
-  const [search, setSearch] = useState("")
+  const [search, setSearch] = useState("");
   const [showModalE, setShowModalE] = useState(false);
   const [editUser, setEditUser] = useState([]);
   const userRol = userData.role_name;
@@ -42,15 +42,28 @@ const Empleados = () => {
   };
 
   const deleteUser = (id) => {
-    axiosClient
-      .delete(`/user/${id}`)
-      .then((res) => {
+    Swal.fire({
+      title: "¿Está seguro?",
+      text: "¡No podrás revertir esto!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      cancelButtonColor: "Cancelar",
+      confirmButtonText: "Eliminar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosClient.delete(`user/${id}`);
+
+        Swal.fire({
+          title: "¡Eliminado!",
+          text: "Su archivo ha sido eliminado.",
+          icon: "success",
+        });
+
         getUsers();
-        alert("Usuario elminado");
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+      }
+    });
   };
 
   useEffect(() => {
@@ -78,14 +91,15 @@ const Empleados = () => {
   const handleSearch = () => {
     setPage(1);
     if (search.trim().length >= 3) {
-      axiosClient.get(`/employees?page=${page}&search=${search}`)
+      axiosClient
+        .get(`/employees?page=${page}&search=${search}`)
         .then((res) => {
-          console.log(res)
-        setUsers(res.data.data);
+          console.log(res);
+          setUsers(res.data.data);
         })
-        .catch(err => {
-          console.error(err)
-        })
+        .catch((err) => {
+          console.error(err);
+        });
     } else {
       getUsers();
     }
@@ -130,7 +144,7 @@ const Empleados = () => {
             type="text"
             className="w-[400px] h-9 px-4 bg-[#EEE] rounded-s-md focus:outline-[#ccc]"
             placeholder="Buscar equipo/lider"
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             value={search}
           />
           <button onClick={handleSearch}>

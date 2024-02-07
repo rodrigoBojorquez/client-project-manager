@@ -110,8 +110,13 @@ function CreateEmployees({ closeModal, getUsers }) {
           }, 1000)
         })
         .catch((err) => {
-          toast.error("Error al agregar empleado")
+          if(err.response.status === 403){
+            toast.error("El correo ya existe.")
           console.error(err);
+          }else if(err.response.status === 404){
+            toast.error("Empleado creado, error al mandar el correo de activación.")
+          console.error(err);
+          }
         });
     }
   };

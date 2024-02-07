@@ -186,7 +186,7 @@ const Materiales = () => {
           </button>
           <button
             className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
-              data.length < 10 && "bg-gray-100 text-gray-400"
+              data?.length < 10 && "bg-gray-100 text-gray-400"
             }`}
             disabled={data.length < 10}
             onClick={handleNextPage}

@@ -120,7 +120,7 @@ const Equipos = () => {
           </button>
         </div>
         <div className="mt-5 flex items-center justify-center">
-          {teams.length > 0 ? (
+          {teams?.length > 0 ? (
             <table className="w-full">
               <tr className="text-[#555] text-xl font-semibold">
                 <th className="text-center">Nombre</th>
@@ -170,7 +170,7 @@ const Equipos = () => {
         {/* CHANGE PAGES */}
         <div
           className={`flex gap-x-3 mt-5 justify-center ${
-            teams.length == 0 ? "hidden" : ""
+            teams?.length == 0 ? "hidden" : ""
           }`}
         >
           <button
@@ -184,9 +184,9 @@ const Equipos = () => {
           </button>
           <button
             className={`bg-white px-5 py-1 border-[1.5px] font-semibold border-gray-300 rounded-md ${
-              teams.length < 10 && "bg-gray-100 text-gray-400"
+              teams?.length < 10 && "bg-gray-100 text-gray-400"
             }`}
-            disabled={teams.length < 10}
+            disabled={teams?.length < 10}
             onClick={handleNextPage}
           >
             Siguiente
