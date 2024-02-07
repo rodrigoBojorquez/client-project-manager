@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import { AiOutlineUsergroupAdd, AiOutlineUserAdd } from "react-icons/ai";
 import { TfiReload } from "react-icons/tfi";
 import { PiUserCircleLight } from "react-icons/pi";
@@ -7,18 +6,68 @@ import { GoTrash } from "react-icons/go";
 import { SlFolder } from "react-icons/sl";
 import axiosClient from "../../../../axiosConfig";
 import MemberSearch from "../EditModals/MemberSearch";
-import LeaderSearchBar from "../EditModals/LeaderSearchBar"
+import LeaderSearchBar from "../EditModals/LeaderSearchBar";
 import ProjectSearchModal from "../EditModals/ProjectSearchModal";
-import {Toaster, toast} from "sonner"
+import { Toaster, toast } from "sonner";
 
 function Edit({ closeModal, equipoData, getTeams }) {
-  // Local state for edits
   const [formData, setFormData] = useState({ ...equipoData });
   const [showPeopleSearch, setShowPeopleSearch] = useState(false);
   const [showLeaderSearch, setShowLeaderSearch] = useState(false);
   const [showProjectSearch, setShowProjectSearch] = useState(false);
+  const [error, setError] = useState({
+    teamName: "",
+    leader: "",
+    project: "",
+    members: "",
+  });
 
-  // Handle member deletion
+  const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''^^´´`¨¨=|°\\/-]/;
+  const numberExpresion = /^[^0-9';]*$/;
+
+  const validateForm = () => {
+    let valid = true;
+    const newErrors = {
+      teamName: "",
+      leader: "",
+      project: "",
+      members: "",
+    };
+
+    if (formData.team_name.trim() === "") {
+      valid = false;
+      newErrors.teamName = "Por favor, ingresa un nombre de equipo.";
+    } else if (!expresion.test(formData.team_name.trim())) {
+      valid = false;
+      newErrors.teamName =
+        "El nombre no puede iniciar con caracteres especiales.";
+    } else if (!numberExpresion.test(formData.team_name.trim())) {
+      valid = false;
+      newErrors.teamName = "El nombre no puede iniciar con numeros.";
+    }
+
+    if (!formData.leader_id) {
+      valid = false;
+      newErrors.leader = "Selecciona un líder para el equipo.";
+    }
+
+    if (!formData.project_info || !formData.project_info.id_project) {
+      valid = false;
+      newErrors.project = "Asigna un proyecto al equipo.";
+    }
+
+    if (
+      !formData.team_members_info ||
+      formData.team_members_info.length === 0
+    ) {
+      valid = false;
+      newErrors.members = "Agrega al menos un miembro al equipo.";
+    }
+
+    setError(newErrors);
+    return valid;
+  };
+
   const handleDeleteMember = (id_user) => {
     const updatedMembers = formData.team_members_info.filter(
       (miembro) => miembro.id_user !== id_user
@@ -29,44 +78,38 @@ function Edit({ closeModal, equipoData, getTeams }) {
     });
   };
 
-  // Handle member addition
   const handleAddMember = () => {
     setShowPeopleSearch(true);
   };
 
   const handleEditTeam = (e, id) => {
     e.preventDefault();
-    const membersArr = formData.team_members_info.map(
-      (member) => member.id_user
-    );
-    const formatedInfo = {
-      teamName: formData.team_name,
-      projectId: formData.project_info.id_project,
-      leaderId: formData.leader_id,
-      members: membersArr,
-    };
-    console.log(formatedInfo)
-    // console.log(id)
-    axiosClient
-      .put(`/team/${id}`, formatedInfo)
-      .then((res) => {
-        console.log(res);
-        getTeams();
-        toast.success("Se editó el equipo")
-        // setTimeout(() => {
-        //   closeModal();
-        // }, 1000)
-      })
-      .catch((err) => {
-        console.error(err);
-        // toast.error("Error al editar")
-      });
-    // console.log(formatedInfo)
-  };
+    if (validateForm()) {
+      const membersArr = formData.team_members_info.map(
+        (member) => member.id_user
+      );
+      const formatedInfo = {
+        teamName: formData.team_name,
+        projectId: formData.project_info.id_project,
+        leaderId: formData.leader_id,
+        members: membersArr,
+      };
 
-  // Handle saving changes
-  const handleSaveChanges = () => {
-    closeModal();
+      axiosClient
+        .put(`/team/${id}`, formatedInfo)
+        .then((res) => {
+          console.log(res);
+          getTeams();
+          toast.success("Se editó el equipo");
+          closeModal();
+        })
+        .catch((err) => {
+          console.error(err);
+          toast.error("Error al editar");
+        });
+    } else {
+      toast.error("Por favor, completa el formulario correctamente.");
+    }
   };
 
   return (
@@ -74,7 +117,9 @@ function Edit({ closeModal, equipoData, getTeams }) {
       {/* Contenedor */}
       <div className="bg-white h-auto w-auto p-5 rounded-md overflow-hidden transition-all duration-300 ease-in-out">
         <form onSubmit={handleEditTeam} className="flex flex-col m-5">
-          <h2 className="text-4xl font-semibold mb-5 text-center">Editar Equipo</h2>
+          <h2 className="text-4xl font-semibold mb-5 text-center">
+            Editar Equipo
+          </h2>
           <div className="flex flex-col mb-5">
             <label htmlFor="" className="text-xl text-[#666] font-semibold">
               Nombre del equipo *
@@ -87,6 +132,9 @@ function Edit({ closeModal, equipoData, getTeams }) {
               }
               className="w-[350px] h-8 px-2 outline-none border border-[#a9a9a9] rounded-md "
             />
+            <div>
+              <p className="text-red-600 text-sm">{error.teamName}</p>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-x-7">

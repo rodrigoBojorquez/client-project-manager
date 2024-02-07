@@ -4,6 +4,7 @@ import { Toaster, toast } from "sonner";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''^^´´`¨¨=|°\\/-]/;
 const emailExpresion = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+const numberExpresion = /^[^0-9';]*$/;
 
 function CreateEmployees({ closeModal, getUsers }) {
   const rols = [
@@ -70,6 +71,9 @@ function CreateEmployees({ closeModal, getUsers }) {
       valid = false;
       newErrors.username =
         "El nombre no puede iniciar con caracteres especiales.";
+    } else if (!numberExpresion.test(user.username.trim())) {
+      valid = false;
+      newErrors.username = "El nombre no puede iniciar con numeros.";
     }
     if (user.email.trim() === "") {
       valid = false;
@@ -85,6 +89,8 @@ function CreateEmployees({ closeModal, getUsers }) {
       newErrors.speciality = "Por favor, ingresa una especialidad";
     } else if (!expresion.test(user.speciality.trim())) {
       newErrors.speciality = "La especialidad no pude ser un caracter";
+    } else if (!numberExpresion.test(user.speciality.trim())) {
+      newErrors.speciality = "La especialidad no pude inicar con numero";
     }
     if (
       user.rol_fk === null ||

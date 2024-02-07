@@ -101,7 +101,7 @@ const MemberSearch = ({ closeMemberModal, setMember, member }) => {
                   selectedMember && selectedMember.id_user === result.id_user
                     ? "bg-[#ccc]"
                     : ""
-                } ${result.team_fk !== null ? "hidden" : ""}`}
+                }`}
               >
                 <li
                   className={

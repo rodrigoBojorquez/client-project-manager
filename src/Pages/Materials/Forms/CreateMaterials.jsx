@@ -3,6 +3,8 @@ import axios from "../../../../axiosConfig.js";
 import { Toaster, toast } from "sonner";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''|°\\/-]/;
+const numberExpresion = /^[^0-9';]*$/;
+
 
 function CreateMaterials({ closeModal, getData }) {
   const [material, setMaterial] = useState({
@@ -42,6 +44,10 @@ function CreateMaterials({ closeModal, getData }) {
     } else if (!expresion.test(material.name.trim())) {
       valid = false;
       newErrors.name = "El nombre no puede iniciar con caracteres especiales.";
+    }
+    else if (!numberExpresion.test(material.name.trim())) {
+      valid = false;
+      newErrors.name = "El nombre no puede iniciar con numeros.";
     }
     if (material.quantity <= 0) {
       valid = false;

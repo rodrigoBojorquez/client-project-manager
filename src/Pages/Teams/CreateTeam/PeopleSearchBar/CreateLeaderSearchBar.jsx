@@ -21,7 +21,6 @@ const PeopleSearchBar = ({ closeLiderModal, setLeader, leader }) => {
   const getEmployes = async () => {
     try {
       const response = await axiosClient.get(`/employees?page=${page}`);
-      // Filtra los empleados con rol_fk igual a 2 (Líder de equipo)
       const filteredEmployees = response.data.data.filter(
         (employee) => employee.rol_fk === 2
       );
@@ -90,7 +89,7 @@ const PeopleSearchBar = ({ closeLiderModal, setLeader, leader }) => {
                   selectedLeader && selectedLeader.id_user === result.id_user
                     ? "bg-[#ccc]"
                     : ""
-                } ${result.team_fk !== null ? "hidden" : ""}`}
+                } `}
               >
                 <li
                   className={

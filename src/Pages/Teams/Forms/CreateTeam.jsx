@@ -12,6 +12,7 @@ import { GoTrash } from "react-icons/go";
 import { Toaster, toast } from "sonner";
 
 const expresion = /^[^!@#$%^&*()_+{}[\]:;<>,.?~""''^^´´`¨¨=|°\\/-]/;
+const numberExpresion = /^[^0-9';]*$/;
 
 function CreateTeam({ closeModal, getTeams }) {
   const [showLiderModal, setShowLiderModal] = useState(false);
@@ -74,6 +75,10 @@ function CreateTeam({ closeModal, getTeams }) {
       valid = false;
       newErrors.teamName =
         "El nombre no puede iniciar con caracteres especiales.";
+    } else if (!numberExpresion.test(teamName.trim())) {
+      valid = false;
+      newErrors.teamName =
+        "El nombre no puede iniciar con numeros.";
     }
 
     // Validación del líder
